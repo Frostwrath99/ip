@@ -20,6 +20,8 @@ public class Es {
         System.out.println(INDENT + "What can I do for you?");
         System.out.println(DIVIDER);
 
+        String[] tasks = new String[100];
+        int taskCount = 0;
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -28,7 +30,15 @@ public class Es {
             }
 
             System.out.println(DIVIDER);
-            System.out.println(INDENT + command);
+            if (command.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println(INDENT + (i + 1) + ". " + tasks[i]);
+                }
+            } else {
+                tasks[taskCount] = command;
+                taskCount++;
+                System.out.println(INDENT + "added: " + command);
+            }
             System.out.println(DIVIDER);
         }
 
