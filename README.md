@@ -36,3 +36,4 @@ Codex:
 
 Cursor:
     Edited Task structure to use ArrayList instead of Array
+    Added Enums data structure for command words and task type

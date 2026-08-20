@@ -24,37 +24,51 @@ public class Es {
         ArrayList<Task> tasks = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
-            String command = scanner.nextLine().trim();
-            if (command.equals("bye")) {
+            String input = scanner.nextLine().trim();
+            Command command = Command.parse(input);
+            if (command == Command.BYE) {
                 break;
             }
 
             System.out.println(DIVIDER);
             try {
-                if (command.equals("list")) {
+                if (command == null) {
+                    if (input.isEmpty()) {
+                        throw new EsException("Please enter a command.");
+                    }
+                    throw new EsException("I'm sorry, but I don't know what that means :-(");
+                }
+
+                switch (command) {
+                case LIST:
                     System.out.println(INDENT + "Here are the tasks in your list:");
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
                     }
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    updateTaskStatus(tasks, command, true);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    updateTaskStatus(tasks, command, false);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    deleteTask(tasks, command);
-                } else if (command.equals("todo") || command.startsWith("todo ")) {
-                    String description = command.length() == 4 ? "" : command.substring(5).trim();
+                    break;
+                case MARK:
+                    updateTaskStatus(tasks, input, true);
+                    break;
+                case UNMARK:
+                    updateTaskStatus(tasks, input, false);
+                    break;
+                case DELETE:
+                    deleteTask(tasks, input);
+                    break;
+                case TODO:
+                    String description = input.substring(command.name().length()).trim();
                     if (description.isEmpty()) {
                         throw new EsException("The description of a todo cannot be empty.");
                     }
                     addTask(tasks, new Todo(description));
-                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    addDeadline(tasks, command.substring(8).trim());
-                } else if (command.equals("event") || command.startsWith("event ")) {
-                    addEvent(tasks, command.substring(5).trim());
-                } else if (command.isEmpty()) {
-                    throw new EsException("Please enter a command.");
-                } else {
+                    break;
+                case DEADLINE:
+                    addDeadline(tasks, input.substring(command.name().length()).trim());
+                    break;
+                case EVENT:
+                    addEvent(tasks, input.substring(command.name().length()).trim());
+                    break;
+                default:
                     throw new EsException("I'm sorry, but I don't know what that means :-(");
                 }
             } catch (EsException e) {

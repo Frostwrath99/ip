@@ -8,16 +8,6 @@ public class Todo extends Task {
      * @param description the text describing the task
      */
     public Todo(String description) {
-        super(description);
-    }
-
-    /**
-     * Returns the formatted to-do task.
-     *
-     * @return the task prefixed with its type and completion status
-     */
-    @Override
-    public String toString() {
-        return "[T]" + super.toString();
+        super(description, TaskType.TODO);
     }
 }

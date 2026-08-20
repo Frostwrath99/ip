@@ -3,15 +3,18 @@
  */
 public abstract class Task {
     private final String description;
+    private final TaskType type;
     private boolean isDone;
 
     /**
-     * Creates an incomplete task with the given description.
+     * Creates an incomplete task with the given description and type.
      *
      * @param description the text describing the task
+     * @param type the kind of task being created
      */
-    public Task(String description) {
+    public Task(String description, TaskType type) {
         this.description = description;
+        this.type = type;
         this.isDone = false;
     }
 
@@ -48,12 +51,12 @@ public abstract class Task {
     }
 
     /**
-     * Returns the shared completion status and description for all task types.
+     * Returns the type icon, completion status, and description for all task types.
      *
-     * @return the completion status and task description
+     * @return the formatted task without type-specific extra details
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + getDescription();
+        return "[" + type.getIcon() + "][" + getStatusIcon() + "] " + getDescription();
     }
 }
