@@ -31,3 +31,4 @@ Codex:
 
    Perform manual tasks: update name, ASCII banner, user greeting
    Perform simple tasks: Replicate user's response, store list of responses
+   Perform complex tasks: Present changes visually
