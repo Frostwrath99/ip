@@ -48,10 +48,12 @@ public abstract class Task {
     }
 
     /**
-     * Returns the formatted task text shown to the user.
+     * Returns the shared completion status and description for all task types.
      *
-     * @return the task type, completion status, description, and any date details
+     * @return the completion status and task description
      */
     @Override
-    public abstract String toString();
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + getDescription();
+    }
 }
