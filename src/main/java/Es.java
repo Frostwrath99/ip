@@ -40,6 +40,8 @@ public class Es {
                     updateTaskStatus(tasks, taskCount, command, true);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     updateTaskStatus(tasks, taskCount, command, false);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    taskCount = deleteTask(tasks, taskCount, command);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
                     String description = command.length() == 4 ? "" : command.substring(5).trim();
                     if (description.isEmpty()) {
@@ -186,6 +188,46 @@ public class Es {
             System.out.println(INDENT + "OK, I've marked this task as not done yet:");
         }
         System.out.println(INDENT + "  " + task);
+    }
+
+    /**
+     * Removes a task after validating its one-based task number.
+     *
+     * @param tasks the task storage array
+     * @param taskCount the current number of tasks
+     * @param command the complete delete command
+     * @return the updated task count
+     * @throws EsException if the command has no valid task number
+     */
+    private static int deleteTask(Task[] tasks, int taskCount, String command) throws EsException {
+        String numberText = command.substring("delete".length()).trim();
+        if (numberText.isEmpty()) {
+            throw new EsException("Please provide a task number to delete.");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(numberText);
+        } catch (NumberFormatException e) {
+            throw new EsException("The task number to delete must be a positive whole number.");
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new EsException("There is no task with that number.");
+        }
+
+        int taskIndex = taskNumber - 1;
+        Task removedTask = tasks[taskIndex];
+        for (int i = taskIndex; i < taskCount - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        taskCount--;
+        tasks[taskCount] = null;
+
+        System.out.println(INDENT + "Noted. I've removed this task:");
+        System.out.println(INDENT + "  " + removedTask);
+        System.out.println(INDENT + "Now you have " + taskCount + " tasks in the list.");
+        return taskCount;
     }
 
     /**

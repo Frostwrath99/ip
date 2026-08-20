@@ -30,5 +30,6 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 Codex:
    Perform manual tasks: update name, ASCII banner, user greeting, test cases, error messages, throwing exceptions
    Perform simple tasks: Replicate user's response, store list of responses, 
-                         marking and unmarking tasks, created task, deadline, event classes with inheritance
+                         marking and unmarking tasks, created task, deadline, event classes with inheritance,
+                         delete task
    Perform complex tasks: Present changes visually, test case skill
