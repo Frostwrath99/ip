@@ -30,3 +30,4 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 Codex:
 
    Perform manual tasks: update name, ASCII banner, user greeting
+   Perform simple tasks: Replicate user's response
