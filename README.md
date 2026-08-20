@@ -33,3 +33,6 @@ Codex:
                          marking and unmarking tasks, created task, deadline, event classes with inheritance,
                          delete task
    Perform complex tasks: Present changes visually, test case skill
+
+Cursor:
+    Edited Task structure to use ArrayList instead of Array

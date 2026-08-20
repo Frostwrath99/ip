@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -20,8 +21,7 @@ public class Es {
         System.out.println(INDENT + "What can I do for you?");
         System.out.println(DIVIDER);
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine().trim();
@@ -33,25 +33,25 @@ public class Es {
             try {
                 if (command.equals("list")) {
                     System.out.println(INDENT + "Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println(INDENT + (i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
                     }
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    updateTaskStatus(tasks, taskCount, command, true);
+                    updateTaskStatus(tasks, command, true);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    updateTaskStatus(tasks, taskCount, command, false);
+                    updateTaskStatus(tasks, command, false);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    taskCount = deleteTask(tasks, taskCount, command);
+                    deleteTask(tasks, command);
                 } else if (command.equals("todo") || command.startsWith("todo ")) {
                     String description = command.length() == 4 ? "" : command.substring(5).trim();
                     if (description.isEmpty()) {
                         throw new EsException("The description of a todo cannot be empty.");
                     }
-                    taskCount = addTask(tasks, taskCount, new Todo(description));
+                    addTask(tasks, new Todo(description));
                 } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                    taskCount = addDeadline(tasks, taskCount, command.substring(8).trim());
+                    addDeadline(tasks, command.substring(8).trim());
                 } else if (command.equals("event") || command.startsWith("event ")) {
-                    taskCount = addEvent(tasks, taskCount, command.substring(5).trim());
+                    addEvent(tasks, command.substring(5).trim());
                 } else if (command.isEmpty()) {
                     throw new EsException("Please enter a command.");
                 } else {
@@ -69,33 +69,23 @@ public class Es {
     }
 
     /**
-     * Adds a task if the fixed-size task list still has capacity.
+     * Adds a task to the list and prints a confirmation.
      *
-     * @param tasks the task storage array
-     * @param taskCount the current number of tasks
+     * @param tasks the task list
      * @param task the task to add
-     * @return the updated task count
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task) throws EsException {
-        if (taskCount == tasks.length) {
-            throw new EsException("You cannot add more than 100 tasks.");
-        }
-
-        tasks[taskCount] = task;
-        taskCount++;
-        printAddedTask(tasks[taskCount - 1], taskCount);
-        return taskCount;
+    private static void addTask(ArrayList<Task> tasks, Task task) {
+        tasks.add(task);
+        printAddedTask(task, tasks.size());
     }
 
     /**
      * Validates and adds a deadline task from its details after the command word.
      *
-     * @param tasks the task storage array
-     * @param taskCount the current number of tasks
+     * @param tasks the task list
      * @param details the deadline description and /by value
-     * @return the updated task count
      */
-    private static int addDeadline(Task[] tasks, int taskCount, String details) throws EsException {
+    private static void addDeadline(ArrayList<Task> tasks, String details) throws EsException {
         int byIndex = details.indexOf("/by ");
         if (byIndex < 0 && details.endsWith("/by")) {
             byIndex = details.length() - 3;
@@ -111,20 +101,17 @@ public class Es {
         } else if (by.isEmpty()) {
             throw new EsException("The deadline cannot be empty.");
         } else {
-            taskCount = addTask(tasks, taskCount, new Deadline(description, by));
+            addTask(tasks, new Deadline(description, by));
         }
-        return taskCount;
     }
 
     /**
      * Validates and adds an event task from its details after the command word.
      *
-     * @param tasks the task storage array
-     * @param taskCount the current number of tasks
+     * @param tasks the task list
      * @param details the event description, /from value, and /to value
-     * @return the updated task count
      */
-    private static int addEvent(Task[] tasks, int taskCount, String details) throws EsException {
+    private static void addEvent(ArrayList<Task> tasks, String details) throws EsException {
         int fromIndex = details.indexOf("/from ");
         int toIndex = details.indexOf("/to ");
         if (toIndex < 0 && details.endsWith("/to")) {
@@ -147,20 +134,18 @@ public class Es {
         } else if (to.isEmpty()) {
             throw new EsException("The end time of an event cannot be empty.");
         } else {
-            taskCount = addTask(tasks, taskCount, new Event(description, from, to));
+            addTask(tasks, new Event(description, from, to));
         }
-        return taskCount;
     }
 
     /**
      * Marks or unmarks a task after validating its one-based task number.
      *
-     * @param tasks the task storage array
-     * @param taskCount the current number of tasks
+     * @param tasks the task list
      * @param command the complete mark or unmark command
      * @param shouldMark whether the task should be marked done
      */
-    private static void updateTaskStatus(Task[] tasks, int taskCount, String command, boolean shouldMark)
+    private static void updateTaskStatus(ArrayList<Task> tasks, String command, boolean shouldMark)
             throws EsException {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
@@ -175,11 +160,11 @@ public class Es {
             throw new EsException("The task number to " + action + " must be a positive whole number.");
         }
 
-        if (taskNumber < 1 || taskNumber > taskCount) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new EsException("There is no task with that number.");
         }
 
-        Task task = tasks[taskNumber - 1];
+        Task task = tasks.get(taskNumber - 1);
         if (shouldMark) {
             task.markAsDone();
             System.out.println(INDENT + "Nice! I've marked this task as done:");
@@ -193,13 +178,11 @@ public class Es {
     /**
      * Removes a task after validating its one-based task number.
      *
-     * @param tasks the task storage array
-     * @param taskCount the current number of tasks
+     * @param tasks the task list
      * @param command the complete delete command
-     * @return the updated task count
      * @throws EsException if the command has no valid task number
      */
-    private static int deleteTask(Task[] tasks, int taskCount, String command) throws EsException {
+    private static void deleteTask(ArrayList<Task> tasks, String command) throws EsException {
         String numberText = command.substring("delete".length()).trim();
         if (numberText.isEmpty()) {
             throw new EsException("Please provide a task number to delete.");
@@ -212,22 +195,15 @@ public class Es {
             throw new EsException("The task number to delete must be a positive whole number.");
         }
 
-        if (taskNumber < 1 || taskNumber > taskCount) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new EsException("There is no task with that number.");
         }
 
-        int taskIndex = taskNumber - 1;
-        Task removedTask = tasks[taskIndex];
-        for (int i = taskIndex; i < taskCount - 1; i++) {
-            tasks[i] = tasks[i + 1];
-        }
-        taskCount--;
-        tasks[taskCount] = null;
+        Task removedTask = tasks.remove(taskNumber - 1);
 
         System.out.println(INDENT + "Noted. I've removed this task:");
         System.out.println(INDENT + "  " + removedTask);
-        System.out.println(INDENT + "Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
