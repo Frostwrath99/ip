@@ -1,7 +1,7 @@
 /**
  * Represents a task entered by the user and whether it has been completed.
  */
-public class Task {
+public abstract class Task {
     private final String description;
     private boolean isDone;
 
@@ -46,4 +46,12 @@ public class Task {
     public void markAsNotDone() {
         isDone = false;
     }
+
+    /**
+     * Returns the formatted task text shown to the user.
+     *
+     * @return the task type, completion status, description, and any date details
+     */
+    @Override
+    public abstract String toString();
 }
