@@ -30,30 +30,33 @@ public class Es {
             }
 
             System.out.println(DIVIDER);
-            if (command.equals("list")) {
-                System.out.println(INDENT + "Here are the tasks in your list:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println(INDENT + (i + 1) + "." + tasks[i]);
-                }
-            } else if (command.equals("mark") || command.startsWith("mark ")) {
-                updateTaskStatus(tasks, taskCount, command, true);
-            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                updateTaskStatus(tasks, taskCount, command, false);
-            } else if (command.equals("todo") || command.startsWith("todo ")) {
-                String description = command.length() == 4 ? "" : command.substring(5).trim();
-                if (description.isEmpty()) {
-                    System.out.println(INDENT + "OOPS!!! The description of a todo cannot be empty.");
-                } else {
+            try {
+                if (command.equals("list")) {
+                    System.out.println(INDENT + "Here are the tasks in your list:");
+                    for (int i = 0; i < taskCount; i++) {
+                        System.out.println(INDENT + (i + 1) + "." + tasks[i]);
+                    }
+                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                    updateTaskStatus(tasks, taskCount, command, true);
+                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                    updateTaskStatus(tasks, taskCount, command, false);
+                } else if (command.equals("todo") || command.startsWith("todo ")) {
+                    String description = command.length() == 4 ? "" : command.substring(5).trim();
+                    if (description.isEmpty()) {
+                        throw new EsException("The description of a todo cannot be empty.");
+                    }
                     taskCount = addTask(tasks, taskCount, new Todo(description));
+                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+                    taskCount = addDeadline(tasks, taskCount, command.substring(8).trim());
+                } else if (command.equals("event") || command.startsWith("event ")) {
+                    taskCount = addEvent(tasks, taskCount, command.substring(5).trim());
+                } else if (command.isEmpty()) {
+                    throw new EsException("Please enter a command.");
+                } else {
+                    throw new EsException("I'm sorry, but I don't know what that means :-(");
                 }
-            } else if (command.equals("deadline") || command.startsWith("deadline ")) {
-                taskCount = addDeadline(tasks, taskCount, command.substring(8).trim());
-            } else if (command.equals("event") || command.startsWith("event ")) {
-                taskCount = addEvent(tasks, taskCount, command.substring(5).trim());
-            } else if (command.isEmpty()) {
-                System.out.println(INDENT + "OOPS!!! Please enter a command.");
-            } else {
-                System.out.println(INDENT + "OOPS!!! I'm sorry, but I don't know what that means :-(");
+            } catch (EsException e) {
+                System.out.println(INDENT + "OOPS!!! " + e.getMessage());
             }
             System.out.println(DIVIDER);
         }
@@ -71,10 +74,9 @@ public class Es {
      * @param task the task to add
      * @return the updated task count
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task) {
+    private static int addTask(Task[] tasks, int taskCount, Task task) throws EsException {
         if (taskCount == tasks.length) {
-            System.out.println(INDENT + "OOPS!!! You cannot add more than 100 tasks.");
-            return taskCount;
+            throw new EsException("You cannot add more than 100 tasks.");
         }
 
         tasks[taskCount] = task;
@@ -91,22 +93,21 @@ public class Es {
      * @param details the deadline description and /by value
      * @return the updated task count
      */
-    private static int addDeadline(Task[] tasks, int taskCount, String details) {
+    private static int addDeadline(Task[] tasks, int taskCount, String details) throws EsException {
         int byIndex = details.indexOf("/by ");
         if (byIndex < 0 && details.endsWith("/by")) {
             byIndex = details.length() - 3;
         }
         if (byIndex < 0) {
-            System.out.println(INDENT + "OOPS!!! A deadline must include /by followed by a date or time.");
-            return taskCount;
+            throw new EsException("A deadline must include /by followed by a date or time.");
         }
 
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + 3).trim();
         if (description.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! The description of a deadline cannot be empty.");
+            throw new EsException("The description of a deadline cannot be empty.");
         } else if (by.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! The deadline cannot be empty.");
+            throw new EsException("The deadline cannot be empty.");
         } else {
             taskCount = addTask(tasks, taskCount, new Deadline(description, by));
         }
@@ -121,30 +122,28 @@ public class Es {
      * @param details the event description, /from value, and /to value
      * @return the updated task count
      */
-    private static int addEvent(Task[] tasks, int taskCount, String details) {
+    private static int addEvent(Task[] tasks, int taskCount, String details) throws EsException {
         int fromIndex = details.indexOf("/from ");
         int toIndex = details.indexOf("/to ");
         if (toIndex < 0 && details.endsWith("/to")) {
             toIndex = details.length() - 3;
         }
         if (fromIndex < 0 || toIndex < 0) {
-            System.out.println(INDENT + "OOPS!!! An event must include /from and /to times.");
-            return taskCount;
+            throw new EsException("An event must include /from and /to times.");
         }
         if (toIndex < fromIndex) {
-            System.out.println(INDENT + "OOPS!!! The /from time must come before the /to time.");
-            return taskCount;
+            throw new EsException("The /from time must come before the /to time.");
         }
 
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + 5, toIndex).trim();
         String to = details.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! The description of an event cannot be empty.");
+            throw new EsException("The description of an event cannot be empty.");
         } else if (from.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! The start time of an event cannot be empty.");
+            throw new EsException("The start time of an event cannot be empty.");
         } else if (to.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! The end time of an event cannot be empty.");
+            throw new EsException("The end time of an event cannot be empty.");
         } else {
             taskCount = addTask(tasks, taskCount, new Event(description, from, to));
         }
@@ -159,26 +158,23 @@ public class Es {
      * @param command the complete mark or unmark command
      * @param shouldMark whether the task should be marked done
      */
-    private static void updateTaskStatus(Task[] tasks, int taskCount, String command, boolean shouldMark) {
+    private static void updateTaskStatus(Task[] tasks, int taskCount, String command, boolean shouldMark)
+            throws EsException {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            System.out.println(INDENT + "OOPS!!! Please provide a task number to " + action + ".");
-            return;
+            throw new EsException("Please provide a task number to " + action + ".");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            System.out.println(INDENT + "OOPS!!! The task number to " + action
-                    + " must be a positive whole number.");
-            return;
+            throw new EsException("The task number to " + action + " must be a positive whole number.");
         }
 
         if (taskNumber < 1 || taskNumber > taskCount) {
-            System.out.println(INDENT + "OOPS!!! There is no task with that number.");
-            return;
+            throw new EsException("There is no task with that number.");
         }
 
         Task task = tasks[taskNumber - 1];
