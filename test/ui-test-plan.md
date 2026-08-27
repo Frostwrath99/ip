@@ -7,8 +7,8 @@ Aim: Verify that each task type can be added, marked or unmarked, and displayed 
 ### Input
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 mark 2
 unmark 2
 list
@@ -33,27 +33,27 @@ bye
     ____________________________________________________________
     ____________________________________________________________
     Got it. I've added this task:
-      [D][ ] return book (by: Sunday)
+      [D][ ] return book (by: Jun 6 2019)
     Now you have 2 tasks in the list.
     ____________________________________________________________
     ____________________________________________________________
     Got it. I've added this task:
-      [E][ ] project meeting (from: Mon 2pm to: 4pm)
+      [E][ ] project meeting (from: Aug 6 2019 2:00 pm to: Aug 6 2019 4:00 pm)
     Now you have 3 tasks in the list.
     ____________________________________________________________
     ____________________________________________________________
     Nice! I've marked this task as done:
-      [D][X] return book (by: Sunday)
+      [D][X] return book (by: Jun 6 2019)
     ____________________________________________________________
     ____________________________________________________________
     OK, I've marked this task as not done yet:
-      [D][ ] return book (by: Sunday)
+      [D][ ] return book (by: Jun 6 2019)
     ____________________________________________________________
     ____________________________________________________________
     Here are the tasks in your list:
     1.[T][ ] borrow book
-    2.[D][ ] return book (by: Sunday)
-    3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+    2.[D][ ] return book (by: Jun 6 2019)
+    3.[E][ ] project meeting (from: Aug 6 2019 2:00 pm to: Aug 6 2019 4:00 pm)
     ____________________________________________________________
     ____________________________________________________________
     Bye. Hope to see you again soon!
@@ -100,8 +100,8 @@ Aim: Verify that deleting a task reports the removed task and renumbers the rema
 ### Input
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 delete 2
 list
 bye
@@ -125,7 +125,7 @@ bye
     ____________________________________________________________
     ____________________________________________________________
     Got it. I've added this task:
-      [D][ ] return book (by: June 6th)
+      [D][ ] return book (by: Jun 6 2019)
     Now you have 2 tasks in the list.
     ____________________________________________________________
     ____________________________________________________________
@@ -135,7 +135,7 @@ bye
     ____________________________________________________________
     ____________________________________________________________
     Noted. I've removed this task:
-      [D][ ] return book (by: June 6th)
+      [D][ ] return book (by: Jun 6 2019)
     Now you have 2 tasks in the list.
     ____________________________________________________________
     ____________________________________________________________
@@ -252,3 +252,5 @@ bye
     Bye. Hope to see you again soon!
     ____________________________________________________________
 ```
+
+
