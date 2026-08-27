@@ -1,3 +1,5 @@
+package es;
+
 /**
  * Represents an error caused by invalid input to the Es chatbot.
  */

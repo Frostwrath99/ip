@@ -1,3 +1,5 @@
+package es;
+
 /** Command action that terminates the chatbot loop. */
 public class ExitCommand extends CommandAction {
     @Override

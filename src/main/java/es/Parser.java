@@ -1,3 +1,5 @@
+package es;
+
 /** Converts raw user input into a recognised command. */
 public class Parser {
     private Parser() { }

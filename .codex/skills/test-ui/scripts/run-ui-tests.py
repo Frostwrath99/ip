@@ -36,7 +36,7 @@ def load_cases(plan_path: Path) -> list[dict[str, str]]:
 
 def compile_program(repo_root: Path) -> Path:
     """Compile all production Java source files and return the classes directory."""
-    source_files = sorted((repo_root / "src/main/java").glob("*.java"))
+    source_files = sorted((repo_root / "src/main/java").rglob("*.java"))
     if not source_files:
         raise ValueError("No Java source files found in src/main/java.")
 
@@ -85,7 +85,7 @@ def prepare_storage(repo_root: Path, saved_tasks: str | None) -> None:
 def run_case(repo_root: Path, classes_dir: Path, commands: str) -> str:
     """Run one command sequence and return the chatbot output."""
     result = subprocess.run(
-        ["java", "-cp", str(classes_dir), "Es"],
+        ["java", "-cp", str(classes_dir), "es.Es"],
         cwd=repo_root,
         input=commands + "\n",
         capture_output=True,

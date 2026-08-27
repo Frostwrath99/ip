@@ -1,3 +1,5 @@
+package es;
+
 import java.util.Scanner;
 
 /** Handles all console input and output for Es. */

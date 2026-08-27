@@ -1,3 +1,5 @@
+package es;
+
 /**
  * User commands recognised by Es.
  */
