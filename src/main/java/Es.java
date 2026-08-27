@@ -13,10 +13,12 @@ public class Es {
 
         Storage storage = new Storage();
         TaskList tasks = new TaskList(loadTasks(storage));
-        String input;
+            String input;
         while ((input = ui.readCommand()) != null) {
             Command command = Parser.parse(input);
-            if (command == Command.BYE) {
+            CommandAction action = Parser.parseAction(input);
+            if (action != null && action.isExit()) {
+                action.execute();
                 break;
             }
 

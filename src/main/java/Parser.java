@@ -11,4 +11,9 @@ public class Parser {
     public static Command parse(String input) {
         return Command.parse(input);
     }
+
+    /** Returns a command action for lifecycle commands such as {@code bye}. */
+    public static CommandAction parseAction(String input) {
+        return parse(input) == Command.BYE ? new ExitCommand() : null;
+    }
 }
