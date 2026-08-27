@@ -1,6 +1,7 @@
 package es;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /** Owns the in-memory collection of chatbot tasks. */
 public class TaskList {
@@ -30,9 +31,11 @@ public class TaskList {
     /** Returns the zero-based indexes of tasks whose descriptions contain a keyword. */
     public ArrayList<Integer> find(String keyword) {
         ArrayList<Integer> matches = new ArrayList<>();
-        String normalizedKeyword = keyword.toLowerCase();
+        String normalizedKeyword = keyword.trim().toLowerCase();
+        Pattern wholeWord = Pattern.compile("(?i)(^|[^a-z0-9])"
+                + Pattern.quote(normalizedKeyword) + "([^a-z0-9]|$)");
         for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getDescription().toLowerCase().contains(normalizedKeyword)) {
+            if (wholeWord.matcher(tasks.get(i).getDescription()).find()) {
                 matches.add(i);
             }
         }

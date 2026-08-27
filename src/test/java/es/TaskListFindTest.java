@@ -15,6 +15,7 @@ class TaskListFindTest {
 
         assertEquals(new ArrayList<>(java.util.List.of(0, 2)), tasks.find("book"));
         assertEquals(new ArrayList<>(java.util.List.of(1)), tasks.find("BREAD"));
+        assertEquals(new ArrayList<>(), tasks.find("pro"));
         assertEquals(new ArrayList<>(), tasks.find("train"));
     }
 }
