@@ -24,6 +24,23 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
 
+## Building and running a fat JAR
+
+The Shadow plugin is configured in `build.gradle` with `es.Es` as the application entry point. From the project root, create the self-contained JAR with:
+
+```powershell
+$env:GRADLE_USER_HOME = "$pwd\.gradle-home"
+.\gradlew.bat shadowJar
+```
+
+The output is written to `build\libs\duke.jar`. Run it with:
+
+```powershell
+java -jar build\libs\duke.jar
+```
+
+The fat JAR includes the application and its runtime dependencies, so no separate classpath is needed.
+
 
 ## AI Usage
 
