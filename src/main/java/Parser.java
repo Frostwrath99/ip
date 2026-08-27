@@ -1,0 +1,14 @@
+/** Converts raw user input into a recognised command. */
+public class Parser {
+    private Parser() { }
+
+    /**
+     * Parses a trimmed input line.
+     *
+     * @param input the user input
+     * @return the matching command, or null when unknown
+     */
+    public static Command parse(String input) {
+        return Command.parse(input);
+    }
+}

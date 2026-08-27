@@ -15,7 +15,7 @@ public class Es {
         TaskList tasks = new TaskList(loadTasks(storage));
         String input;
         while ((input = ui.readCommand()) != null) {
-            Command command = Command.parse(input);
+            Command command = Parser.parse(input);
             if (command == Command.BYE) {
                 break;
             }
