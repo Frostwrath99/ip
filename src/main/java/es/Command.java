@@ -11,7 +11,8 @@ public enum Command {
     DELETE,
     TODO,
     DEADLINE,
-    EVENT;
+    EVENT,
+    FIND;
 
     /**
      * Identifies the command word at the start of a trimmed input line.
