@@ -1,3 +1,5 @@
+package es;
+
 /**
  * The kinds of tasks Es can store, each identified by a one-letter icon.
  */

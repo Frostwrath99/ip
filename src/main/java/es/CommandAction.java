@@ -1,3 +1,5 @@
+package es;
+
 /** Represents an executable chatbot command action. */
 public abstract class CommandAction {
     /** Executes this action. */
