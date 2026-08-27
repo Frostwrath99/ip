@@ -27,7 +27,7 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 
 ## AI Usage
 
-Codex:
+Codex Terra Medium:
    Perform manual tasks: update name, ASCII banner, user greeting, test cases, error messages, throwing exceptions
    Perform simple tasks: Replicate user's response, store list of responses, 
                          marking and unmarking tasks, created task, deadline, event classes with inheritance,
@@ -38,3 +38,6 @@ Cursor:
     Edited Task structure to use ArrayList instead of Array
     Added Enums data structure for command words and task type
     Added save and load data file functionality to a relative file path, including error handling
+
+Codex Luna Light:
+    Added conversion of deadline strings to dates, along with error handling for incorrect date formats

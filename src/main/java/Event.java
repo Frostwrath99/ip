@@ -1,9 +1,11 @@
+import java.time.LocalDateTime;
+
 /**
  * Represents a task that begins and ends at specified times.
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     /**
      * Creates an event task.
@@ -12,10 +14,10 @@ public class Event extends Task {
      * @param from the event start time text
      * @param to the event end time text
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, String from, String to) throws EsException {
         super(description, TaskType.EVENT);
-        this.from = from;
-        this.to = to;
+        this.from = DateTimeParser.parse(from);
+        this.to = DateTimeParser.parse(to);
     }
 
     /**
@@ -36,6 +38,6 @@ public class Event extends Task {
     @Override
     public String toString() {
         return super.toString()
-                + " (from: " + from + " to: " + to + ")";
+                + " (from: " + DateTimeParser.format(from) + " to: " + DateTimeParser.format(to) + ")";
     }
 }

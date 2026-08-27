@@ -1,8 +1,10 @@
+import java.time.LocalDateTime;
+
 /**
  * Represents a task that must be completed by a specified time.
  */
 public class Deadline extends Task {
-    private final String by;
+    private final LocalDateTime by;
 
     /**
      * Creates a deadline task.
@@ -10,9 +12,9 @@ public class Deadline extends Task {
      * @param description the text describing the task
      * @param by the deadline text entered by the user
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, String by) throws EsException {
         super(description, TaskType.DEADLINE);
-        this.by = by;
+        this.by = DateTimeParser.parse(by);
     }
 
     /**
@@ -32,6 +34,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by + ")";
+        return super.toString() + " (by: " + DateTimeParser.format(by) + ")";
     }
 }
