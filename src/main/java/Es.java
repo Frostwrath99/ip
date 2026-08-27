@@ -6,32 +6,23 @@ import java.util.Scanner;
  */
 public class Es {
     private static final String INDENT = "    ";
-    private static final String DIVIDER = INDENT + "____________________________________________________________";
 
     public static void main(String[] args) {
-        String banner = INDENT + " _____     \n"
-                + INDENT + "| ____|___ \n"
-                + INDENT + "|  _| / __|\n"
-                + INDENT + "| |___\\__ \\\n"
-                + INDENT + "|_____|___/\n";
-
-        System.out.println(DIVIDER);
-        System.out.print(banner);
-        System.out.println(INDENT + "Hello! I'm Es.");
-        System.out.println(INDENT + "What can I do for you?");
-        System.out.println(DIVIDER);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
         Storage storage = new Storage();
-        ArrayList<Task> tasks = loadTasks(storage);
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
-            Command command = Command.parse(input);
-            if (command == Command.BYE) {
+        TaskList tasks = new TaskList(loadTasks(storage));
+            String input;
+        while ((input = ui.readCommand()) != null) {
+            Command command = Parser.parse(input);
+            CommandAction action = Parser.parseAction(input);
+            if (action != null && action.isExit()) {
+                action.execute();
                 break;
             }
 
-            System.out.println(DIVIDER);
+            ui.showLine();
             try {
                 if (command == null) {
                     if (input.isEmpty()) {
@@ -42,9 +33,9 @@ public class Es {
 
                 switch (command) {
                 case LIST:
-                    System.out.println(INDENT + "Here are the tasks in your list:");
+                    ui.show("Here are the tasks in your list:");
                     for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
+                        ui.show((i + 1) + "." + tasks.get(i));
                     }
                     break;
                 case MARK:
@@ -73,14 +64,14 @@ public class Es {
                     throw new EsException("I'm sorry, but I don't know what that means :-(");
                 }
             } catch (EsException e) {
-                System.out.println(INDENT + "OOPS!!! " + e.getMessage());
+                ui.showError(e.getMessage());
             }
-            System.out.println(DIVIDER);
+            ui.showLine();
         }
 
-        System.out.println(DIVIDER);
-        System.out.println(INDENT + "Bye. Hope to see you again soon!");
-        System.out.println(DIVIDER);
+        ui.showLine();
+        ui.show("Bye. Hope to see you again soon!");
+        ui.showLine();
     }
 
     /**
@@ -94,9 +85,9 @@ public class Es {
         try {
             return storage.load();
         } catch (EsException e) {
-            System.out.println(DIVIDER);
+            System.out.println(INDENT + "____________________________________________________________");
             System.out.println(INDENT + "OOPS!!! " + e.getMessage());
-            System.out.println(DIVIDER);
+            System.out.println(INDENT + "____________________________________________________________");
             return new ArrayList<>();
         }
     }
@@ -108,10 +99,10 @@ public class Es {
      * @param tasks the task list
      * @param task the task to add
      */
-    private static void addTask(Storage storage, ArrayList<Task> tasks, Task task) throws EsException {
+    private static void addTask(Storage storage, TaskList tasks, Task task) throws EsException {
         tasks.add(task);
         printAddedTask(task, tasks.size());
-        storage.save(tasks);
+        storage.save(tasks.asList());
     }
 
     /**
@@ -121,7 +112,7 @@ public class Es {
      * @param tasks the task list
      * @param details the deadline description and /by value
      */
-    private static void addDeadline(Storage storage, ArrayList<Task> tasks, String details) throws EsException {
+    private static void addDeadline(Storage storage, TaskList tasks, String details) throws EsException {
         int byIndex = details.indexOf("/by ");
         if (byIndex < 0 && details.endsWith("/by")) {
             byIndex = details.length() - 3;
@@ -148,7 +139,7 @@ public class Es {
      * @param tasks the task list
      * @param details the event description, /from value, and /to value
      */
-    private static void addEvent(Storage storage, ArrayList<Task> tasks, String details) throws EsException {
+    private static void addEvent(Storage storage, TaskList tasks, String details) throws EsException {
         int fromIndex = details.indexOf("/from ");
         int toIndex = details.indexOf("/to ");
         if (toIndex < 0 && details.endsWith("/to")) {
@@ -183,7 +174,7 @@ public class Es {
      * @param command the complete mark or unmark command
      * @param shouldMark whether the task should be marked done
      */
-    private static void updateTaskStatus(Storage storage, ArrayList<Task> tasks, String command, boolean shouldMark)
+    private static void updateTaskStatus(Storage storage, TaskList tasks, String command, boolean shouldMark)
             throws EsException {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
@@ -211,7 +202,7 @@ public class Es {
             System.out.println(INDENT + "OK, I've marked this task as not done yet:");
         }
         System.out.println(INDENT + "  " + task);
-        storage.save(tasks);
+        storage.save(tasks.asList());
     }
 
     /**
@@ -222,7 +213,7 @@ public class Es {
      * @param command the complete delete command
      * @throws EsException if the command has no valid task number
      */
-    private static void deleteTask(Storage storage, ArrayList<Task> tasks, String command) throws EsException {
+    private static void deleteTask(Storage storage, TaskList tasks, String command) throws EsException {
         String numberText = command.substring("delete".length()).trim();
         if (numberText.isEmpty()) {
             throw new EsException("Please provide a task number to delete.");
@@ -244,7 +235,7 @@ public class Es {
         System.out.println(INDENT + "Noted. I've removed this task:");
         System.out.println(INDENT + "  " + removedTask);
         System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
-        storage.save(tasks);
+        storage.save(tasks.asList());
     }
 
     /**
