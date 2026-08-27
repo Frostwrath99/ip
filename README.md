@@ -41,3 +41,4 @@ Cursor:
 
 Codex Luna Light:
     Added conversion of deadline strings to dates, along with error handling for incorrect date formats
+    Restructured code to follow OOP principles by extracting multiple classes 
