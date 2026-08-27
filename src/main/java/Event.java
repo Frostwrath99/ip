@@ -19,6 +19,16 @@ public class Event extends Task {
     }
 
     /**
+     * Returns the encoded event line for saving to disk.
+     *
+     * @return a line in the form {@code E | 0 | description | from | to}
+     */
+    @Override
+    public String toStorageLine() {
+        return toStoragePrefix() + " | " + from + " | " + to;
+    }
+
+    /**
      * Returns the formatted event task.
      *
      * @return the task with its start and end times

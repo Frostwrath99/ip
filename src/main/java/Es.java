@@ -21,7 +21,8 @@ public class Es {
         System.out.println(INDENT + "What can I do for you?");
         System.out.println(DIVIDER);
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage();
+        ArrayList<Task> tasks = loadTasks(storage);
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
@@ -47,26 +48,26 @@ public class Es {
                     }
                     break;
                 case MARK:
-                    updateTaskStatus(tasks, input, true);
+                    updateTaskStatus(storage, tasks, input, true);
                     break;
                 case UNMARK:
-                    updateTaskStatus(tasks, input, false);
+                    updateTaskStatus(storage, tasks, input, false);
                     break;
                 case DELETE:
-                    deleteTask(tasks, input);
+                    deleteTask(storage, tasks, input);
                     break;
                 case TODO:
                     String description = input.substring(command.name().length()).trim();
                     if (description.isEmpty()) {
                         throw new EsException("The description of a todo cannot be empty.");
                     }
-                    addTask(tasks, new Todo(description));
+                    addTask(storage, tasks, new Todo(description));
                     break;
                 case DEADLINE:
-                    addDeadline(tasks, input.substring(command.name().length()).trim());
+                    addDeadline(storage, tasks, input.substring(command.name().length()).trim());
                     break;
                 case EVENT:
-                    addEvent(tasks, input.substring(command.name().length()).trim());
+                    addEvent(storage, tasks, input.substring(command.name().length()).trim());
                     break;
                 default:
                     throw new EsException("I'm sorry, but I don't know what that means :-(");
@@ -83,23 +84,44 @@ public class Es {
     }
 
     /**
-     * Adds a task to the list and prints a confirmation.
+     * Loads tasks from disk, or starts with an empty list if none exist yet.
+     * A corrupted or unreadable file is reported and replaced with an empty list.
      *
+     * @param storage the file used to persist tasks
+     * @return the loaded tasks, or an empty list when loading fails
+     */
+    private static ArrayList<Task> loadTasks(Storage storage) {
+        try {
+            return storage.load();
+        } catch (EsException e) {
+            System.out.println(DIVIDER);
+            System.out.println(INDENT + "OOPS!!! " + e.getMessage());
+            System.out.println(DIVIDER);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Adds a task to the list, prints a confirmation, and saves the updated list.
+     *
+     * @param storage the file used to persist tasks
      * @param tasks the task list
      * @param task the task to add
      */
-    private static void addTask(ArrayList<Task> tasks, Task task) {
+    private static void addTask(Storage storage, ArrayList<Task> tasks, Task task) throws EsException {
         tasks.add(task);
         printAddedTask(task, tasks.size());
+        storage.save(tasks);
     }
 
     /**
      * Validates and adds a deadline task from its details after the command word.
      *
+     * @param storage the file used to persist tasks
      * @param tasks the task list
      * @param details the deadline description and /by value
      */
-    private static void addDeadline(ArrayList<Task> tasks, String details) throws EsException {
+    private static void addDeadline(Storage storage, ArrayList<Task> tasks, String details) throws EsException {
         int byIndex = details.indexOf("/by ");
         if (byIndex < 0 && details.endsWith("/by")) {
             byIndex = details.length() - 3;
@@ -115,17 +137,18 @@ public class Es {
         } else if (by.isEmpty()) {
             throw new EsException("The deadline cannot be empty.");
         } else {
-            addTask(tasks, new Deadline(description, by));
+            addTask(storage, tasks, new Deadline(description, by));
         }
     }
 
     /**
      * Validates and adds an event task from its details after the command word.
      *
+     * @param storage the file used to persist tasks
      * @param tasks the task list
      * @param details the event description, /from value, and /to value
      */
-    private static void addEvent(ArrayList<Task> tasks, String details) throws EsException {
+    private static void addEvent(Storage storage, ArrayList<Task> tasks, String details) throws EsException {
         int fromIndex = details.indexOf("/from ");
         int toIndex = details.indexOf("/to ");
         if (toIndex < 0 && details.endsWith("/to")) {
@@ -148,18 +171,19 @@ public class Es {
         } else if (to.isEmpty()) {
             throw new EsException("The end time of an event cannot be empty.");
         } else {
-            addTask(tasks, new Event(description, from, to));
+            addTask(storage, tasks, new Event(description, from, to));
         }
     }
 
     /**
      * Marks or unmarks a task after validating its one-based task number.
      *
+     * @param storage the file used to persist tasks
      * @param tasks the task list
      * @param command the complete mark or unmark command
      * @param shouldMark whether the task should be marked done
      */
-    private static void updateTaskStatus(ArrayList<Task> tasks, String command, boolean shouldMark)
+    private static void updateTaskStatus(Storage storage, ArrayList<Task> tasks, String command, boolean shouldMark)
             throws EsException {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
@@ -187,16 +211,18 @@ public class Es {
             System.out.println(INDENT + "OK, I've marked this task as not done yet:");
         }
         System.out.println(INDENT + "  " + task);
+        storage.save(tasks);
     }
 
     /**
      * Removes a task after validating its one-based task number.
      *
+     * @param storage the file used to persist tasks
      * @param tasks the task list
      * @param command the complete delete command
      * @throws EsException if the command has no valid task number
      */
-    private static void deleteTask(ArrayList<Task> tasks, String command) throws EsException {
+    private static void deleteTask(Storage storage, ArrayList<Task> tasks, String command) throws EsException {
         String numberText = command.substring("delete".length()).trim();
         if (numberText.isEmpty()) {
             throw new EsException("Please provide a task number to delete.");
@@ -218,6 +244,7 @@ public class Es {
         System.out.println(INDENT + "Noted. I've removed this task:");
         System.out.println(INDENT + "  " + removedTask);
         System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
+        storage.save(tasks);
     }
 
     /**

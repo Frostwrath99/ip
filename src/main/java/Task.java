@@ -51,6 +51,22 @@ public abstract class Task {
     }
 
     /**
+     * Returns the encoded line used to save this task to disk.
+     *
+     * @return the storage line for this task
+     */
+    public abstract String toStorageLine();
+
+    /**
+     * Returns the shared type, completion flag, and description used in storage lines.
+     *
+     * @return the prefix {@code T | 0 | description} (with the matching type icon and flag)
+     */
+    protected String toStoragePrefix() {
+        return type.getIcon() + " | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
      * Returns the type icon, completion status, and description for all task types.
      *
      * @return the formatted task without type-specific extra details

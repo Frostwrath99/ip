@@ -10,4 +10,14 @@ public class Todo extends Task {
     public Todo(String description) {
         super(description, TaskType.TODO);
     }
+
+    /**
+     * Returns the encoded to-do line for saving to disk.
+     *
+     * @return a line in the form {@code T | 0 | description}
+     */
+    @Override
+    public String toStorageLine() {
+        return toStoragePrefix();
+    }
 }

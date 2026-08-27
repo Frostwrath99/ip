@@ -11,8 +11,11 @@ from pathlib import Path
 CASE_PATTERN = re.compile(
     r"^## (?P<title>.+?)\n\n"
     r"Aim: (?P<aim>.+?)\n\n"
+    r"(?:### Saved tasks\n```text\n(?P<saved_tasks>.*?)\n```\n\n)?"
     r"### Input\n```text\n(?P<input>.*?)\n```\n\n"
-    r"### Expected output\n```text\n(?P<expected>.*?)\n```",
+    r"### Expected output\n```text\n(?P<expected>.*?)\n```"
+    r"(?:\n\n### Second session input\n```text\n(?P<second_input>.*?)\n```\n\n"
+    r"### Second session expected output\n```text\n(?P<second_expected>.*?)\n```)?",
     re.MULTILINE | re.DOTALL,
 )
 
@@ -67,12 +70,24 @@ def verify_java_version() -> None:
         raise SystemExit(1)
 
 
-def run_case(repo_root: Path, classes_dir: Path, case: dict[str, str]) -> str:
+def prepare_storage(repo_root: Path, saved_tasks: str | None) -> None:
+    """Give each test a clean data file, optionally seeded with saved tasks."""
+    data_dir = repo_root / "data"
+    data_file = data_dir / "es.txt"
+    if data_file.exists() or data_file.is_symlink():
+        data_file.unlink()
+    if saved_tasks is None:
+        return
+    data_dir.mkdir(parents=True, exist_ok=True)
+    data_file.write_text(saved_tasks + "\n", encoding="utf-8")
+
+
+def run_case(repo_root: Path, classes_dir: Path, commands: str) -> str:
     """Run one command sequence and return the chatbot output."""
     result = subprocess.run(
         ["java", "-cp", str(classes_dir), "Es"],
         cwd=repo_root,
-        input=case["input"] + "\n",
+        input=commands + "\n",
         capture_output=True,
         text=True,
         check=False,
@@ -84,6 +99,22 @@ def run_case(repo_root: Path, classes_dir: Path, case: dict[str, str]) -> str:
     return result.stdout
 
 
+def report_session(label: str, commands: str, actual: str, expected: str) -> None:
+    """Print one session and stop if its output does not match."""
+    print(f"Console input{label}:")
+    print(commands)
+    print(f"Console output{label}:")
+    print(actual, end="" if actual.endswith("\n") else "\n")
+
+    if normalise(actual) != normalise(expected):
+        print("FAIL: output did not match the expected output.")
+        print("Expected output:")
+        print(expected)
+        print("Actual output:")
+        print(actual, end="" if actual.endswith("\n") else "\n")
+        raise SystemExit(1)
+
+
 def main() -> None:
     """Run each planned UI test and stop at the first mismatch."""
     repo_root = Path(__file__).resolve().parents[4]
@@ -92,21 +123,21 @@ def main() -> None:
     classes_dir = compile_program(repo_root)
 
     for number, case in enumerate(cases, start=1):
-        actual = run_case(repo_root, classes_dir, case)
+        prepare_storage(repo_root, case.get("saved_tasks"))
+        actual = run_case(repo_root, classes_dir, case["input"])
         print(f"=== Test {number}: {case['title']} ===")
         print(f"Aim: {case['aim']}")
-        print("Console input:")
-        print(case["input"])
-        print("Console output:")
-        print(actual, end="" if actual.endswith("\n") else "\n")
+        second_label = " (session 1)" if case.get("second_input") else ""
+        report_session(second_label, case["input"], actual, case["expected"])
 
-        if normalise(actual) != normalise(case["expected"]):
-            print("FAIL: output did not match the expected output.")
-            print("Expected output:")
-            print(case["expected"])
-            print("Actual output:")
-            print(actual, end="" if actual.endswith("\n") else "\n")
-            raise SystemExit(1)
+        if case.get("second_input"):
+            second_actual = run_case(repo_root, classes_dir, case["second_input"])
+            report_session(
+                " (session 2)",
+                case["second_input"],
+                second_actual,
+                case["second_expected"],
+            )
 
         print("PASS\n")
 
