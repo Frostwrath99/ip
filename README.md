@@ -63,5 +63,6 @@ Codex Luna Light:
     JUnit:
         Maintain tests for the highest-value behavior (at least the top 50% of non-trivial methods).
         Update the JUnit tests after every code change that affects tested behavior.
-        Restructured code to package classes
-        Edited README.md setup instructions
+
+    Restructured code to package classes
+    Edited README.md setup instructions for IntelliJ and Jar
