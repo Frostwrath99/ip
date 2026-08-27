@@ -26,4 +26,16 @@ public class TaskList {
 
     /** Returns the underlying list for persistence. */
     public ArrayList<Task> asList() { return tasks; }
+
+    /** Returns the zero-based indexes of tasks whose descriptions contain a keyword. */
+    public ArrayList<Integer> find(String keyword) {
+        ArrayList<Integer> matches = new ArrayList<>();
+        String normalizedKeyword = keyword.toLowerCase();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getDescription().toLowerCase().contains(normalizedKeyword)) {
+                matches.add(i);
+            }
+        }
+        return matches;
+    }
 }

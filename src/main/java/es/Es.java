@@ -40,6 +40,9 @@ public class Es {
                         ui.show((i + 1) + "." + tasks.get(i));
                     }
                     break;
+                case FIND:
+                    findTasks(tasks, input.substring(command.name().length()).trim(), ui);
+                    break;
                 case MARK:
                     updateTaskStatus(storage, tasks, input, true);
                     break;
@@ -250,5 +253,16 @@ public class Es {
         System.out.println(INDENT + "Got it. I've added this task:");
         System.out.println(INDENT + "  " + task);
         System.out.println(INDENT + "Now you have " + taskCount + " tasks in the list.");
+    }
+
+    /** Displays tasks whose descriptions contain the requested keyword. */
+    private static void findTasks(TaskList tasks, String keyword, Ui ui) throws EsException {
+        if (keyword.isEmpty()) {
+            throw new EsException("Please provide a keyword to find.");
+        }
+        ui.show("Here are the matching tasks in your list:");
+        for (int index : tasks.find(keyword)) {
+            ui.show((index + 1) + "." + tasks.get(index));
+        }
     }
 }
