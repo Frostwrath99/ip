@@ -13,6 +13,9 @@ src/main/resources/docs/
 *.iml
 bin/
 
+# Saved chatbot tasks
+/data/
+
 # Temp files
 _temp/
 
