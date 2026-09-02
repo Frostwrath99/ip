@@ -69,3 +69,5 @@ Codex Luna Light:
     Created Project Skill and updated Agent.md to follow coding standards
 
     Updated checkstyle and fixed checkstyle violations
+    Imported GUI from javafx-tutorial files and integrated with current responses
+    Added delay after bye before closing the GUI

@@ -1,11 +1,63 @@
 package es;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point for the Es chatbot application.
  */
 public class Es {
+    private final Storage guiStorage = new Storage();
+    private final TaskList guiTasks = new TaskList(loadTasks(new Storage()));
+    /** Returns a response for the graphical interface. */
+    public String getResponse(String input) {
+        String commandText = input == null ? "" : input.trim();
+        if (commandText.isEmpty()) {
+            return "OOPS!!! Please enter a command.";
+        }
+        Command command = Parser.parse(commandText);
+        try {
+            if (command == null) {
+                throw new EsException("I'm sorry, but I don't know what that means :-(");
+            }
+            switch (command) {
+            case TODO:
+                String description = commandText.substring(4).trim();
+                if (description.isEmpty()) throw new EsException("The description of a todo cannot be empty.");
+                return addGuiTask(new Todo(description));
+            case DEADLINE:
+                addGuiDeadline(commandText.substring(8).trim());
+                return addGuiTaskMessage(guiTasks.get(guiTasks.size() - 1));
+            case EVENT:
+                addGuiEvent(commandText.substring(5).trim());
+                return addGuiTaskMessage(guiTasks.get(guiTasks.size() - 1));
+            case LIST:
+                StringBuilder result = new StringBuilder("Here are the tasks in your list:");
+                for (int i = 0; i < guiTasks.size(); i++) result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                return result.toString();
+            case BYE: return "Bye. Hope to see you again soon!";
+            case MARK: return toggleGui(commandText, true);
+            case UNMARK: return toggleGui(commandText, false);
+            case DELETE: return deleteGui(commandText);
+            case FIND:
+                String keyword = commandText.substring(4).trim();
+                if (keyword.isEmpty()) throw new EsException("Please provide a keyword to find.");
+                StringBuilder matches = new StringBuilder("Here are the matching tasks in your list:");
+                for (int i : guiTasks.find(keyword)) matches.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                return matches.toString();
+            default: return "Es received: " + commandText;
+            }
+        } catch (EsException e) { return "OOPS!!! " + e.getMessage(); }
+    }
+
+    private String addGuiTask(Task task) throws EsException {
+        guiTasks.add(task); guiStorage.save(guiTasks.asList()); return addGuiTaskMessage(task);
+    }
+    private String addGuiTaskMessage(Task task) { return "Got it. I've added this task:\n  " + task + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
+    private void addGuiDeadline(String details) throws EsException { int i = details.indexOf("/by "); if (i < 0) throw new EsException("A deadline must include /by followed by a date or time."); String d = details.substring(0, i).trim(); String b = details.substring(i + 4).trim(); if (d.isEmpty()) throw new EsException("The description of a deadline cannot be empty."); if (b.isEmpty()) throw new EsException("The deadline cannot be empty."); addGuiTask(new Deadline(d, b)); }
+    private void addGuiEvent(String details) throws EsException { int f = details.indexOf("/from "); int t = details.indexOf("/to "); if (f < 0 || t < 0) throw new EsException("An event must include /from and /to times."); String d = details.substring(0, f).trim(); String from = details.substring(f + 6, t).trim(); String to = details.substring(t + 4).trim(); if (d.isEmpty()) throw new EsException("The description of an event cannot be empty."); if (from.isEmpty() || to.isEmpty()) throw new EsException("Event times cannot be empty."); addGuiTask(new Event(d, from, to)); }
+    private String toggleGui(String text, boolean mark) throws EsException { int n = Integer.parseInt(text.substring(mark ? 4 : 6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); if (mark) guiTasks.get(n).markAsDone(); else guiTasks.get(n).markAsNotDone(); guiStorage.save(guiTasks.asList()); return (mark ? "Nice! I've marked this task as done:\n  " : "OK, I've marked this task as not done yet:\n  ") + guiTasks.get(n); }
+    private String deleteGui(String text) throws EsException { int n = Integer.parseInt(text.substring(6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); Task removed = guiTasks.remove(n); guiStorage.save(guiTasks.asList()); return "Noted. I've removed this task:\n  " + removed + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
     private static final String INDENT = "    ";
 
     public static void main(String[] args) {
