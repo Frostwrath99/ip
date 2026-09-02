@@ -1,7 +1,6 @@
 package es;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Entry point for the Es chatbot application.

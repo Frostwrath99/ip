@@ -67,3 +67,5 @@ Codex Luna Light:
     Restructured code to package classes
     Edited README.md setup instructions for IntelliJ and Jar
     Created Project Skill and updated Agent.md to follow coding standards
+
+    Updated checkstyle and fixed checkstyle violations
