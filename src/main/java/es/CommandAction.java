@@ -6,5 +6,7 @@ public abstract class CommandAction {
     public abstract void execute();
 
     /** Returns whether this action terminates the chatbot. */
-    public boolean isExit() { return false; }
+    public boolean isExit() {
+        return false;
+    }
 }
