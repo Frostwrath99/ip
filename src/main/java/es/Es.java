@@ -106,7 +106,16 @@ public class Es {
         String message = mark ? "Nice! I've marked this task as done:" : "OK, I've marked this task as not done yet:";
         return message + "\n  " + guiTasks.get(index);
     }
-    private String deleteGui(String text) throws EsException { int n = Integer.parseInt(text.substring(6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); Task removed = guiTasks.remove(n); guiStorage.save(guiTasks.asList()); return "Noted. I've removed this task:\n  " + removed + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
+    private String deleteGui(String text) throws EsException {
+        int index = Integer.parseInt(text.substring("delete".length()).trim()) - 1;
+        if (index < 0 || index >= guiTasks.size()) {
+            throw new EsException("There is no task with that number.");
+        }
+        Task removed = guiTasks.remove(index);
+        guiStorage.save(guiTasks.asList());
+        return "Noted. I've removed this task:\n  " + removed
+                + "\nNow you have " + guiTasks.size() + " tasks in the list.";
+    }
     private static final String INDENT = "    ";
 
     public static void main(String[] args) {
