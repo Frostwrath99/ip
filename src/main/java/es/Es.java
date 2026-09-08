@@ -91,7 +91,21 @@ public class Es {
         }
         addGuiTask(new Event(description, from, to));
     }
-    private String toggleGui(String text, boolean mark) throws EsException { int n = Integer.parseInt(text.substring(mark ? 4 : 6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); if (mark) guiTasks.get(n).markAsDone(); else guiTasks.get(n).markAsNotDone(); guiStorage.save(guiTasks.asList()); return (mark ? "Nice! I've marked this task as done:\n  " : "OK, I've marked this task as not done yet:\n  ") + guiTasks.get(n); }
+    private String toggleGui(String text, boolean mark) throws EsException {
+        String command = mark ? "mark" : "unmark";
+        int index = Integer.parseInt(text.substring(command.length()).trim()) - 1;
+        if (index < 0 || index >= guiTasks.size()) {
+            throw new EsException("There is no task with that number.");
+        }
+        if (mark) {
+            guiTasks.get(index).markAsDone();
+        } else {
+            guiTasks.get(index).markAsNotDone();
+        }
+        guiStorage.save(guiTasks.asList());
+        String message = mark ? "Nice! I've marked this task as done:" : "OK, I've marked this task as not done yet:";
+        return message + "\n  " + guiTasks.get(index);
+    }
     private String deleteGui(String text) throws EsException { int n = Integer.parseInt(text.substring(6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); Task removed = guiTasks.remove(n); guiStorage.save(guiTasks.asList()); return "Noted. I've removed this task:\n  " + removed + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
     private static final String INDENT = "    ";
 
