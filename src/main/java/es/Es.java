@@ -47,18 +47,77 @@ public class Es {
                 return matches.toString();
             default: return "Es received: " + commandText;
             }
-        } catch (EsException e) { return "OOPS!!! " + e.getMessage(); }
+        } catch (EsException e) {
+            return "OOPS!!! " + e.getMessage();
+        }
     }
 
     private String addGuiTask(Task task) throws EsException {
         assert task != null : "A task command must create a non-null task";
         guiTasks.add(task); guiStorage.save(guiTasks.asList()); return addGuiTaskMessage(task);
     }
-    private String addGuiTaskMessage(Task task) { return "Got it. I've added this task:\n  " + task + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
-    private void addGuiDeadline(String details) throws EsException { int i = details.indexOf("/by "); if (i < 0) throw new EsException("A deadline must include /by followed by a date or time."); String d = details.substring(0, i).trim(); String b = details.substring(i + 4).trim(); if (d.isEmpty()) throw new EsException("The description of a deadline cannot be empty."); if (b.isEmpty()) throw new EsException("The deadline cannot be empty."); addGuiTask(new Deadline(d, b)); }
-    private void addGuiEvent(String details) throws EsException { int f = details.indexOf("/from "); int t = details.indexOf("/to "); if (f < 0 || t < 0) throw new EsException("An event must include /from and /to times."); String d = details.substring(0, f).trim(); String from = details.substring(f + 6, t).trim(); String to = details.substring(t + 4).trim(); if (d.isEmpty()) throw new EsException("The description of an event cannot be empty."); if (from.isEmpty() || to.isEmpty()) throw new EsException("Event times cannot be empty."); addGuiTask(new Event(d, from, to)); }
-    private String toggleGui(String text, boolean mark) throws EsException { int n = Integer.parseInt(text.substring(mark ? 4 : 6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); assert guiTasks.get(n) != null : "A valid task index must reference a task"; if (mark) guiTasks.get(n).markAsDone(); else guiTasks.get(n).markAsNotDone(); guiStorage.save(guiTasks.asList()); return (mark ? "Nice! I've marked this task as done:\n  " : "OK, I've marked this task as not done yet:\n  ") + guiTasks.get(n); }
-    private String deleteGui(String text) throws EsException { int n = Integer.parseInt(text.substring(6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); Task removed = guiTasks.remove(n); guiStorage.save(guiTasks.asList()); return "Noted. I've removed this task:\n  " + removed + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
+    private String addGuiTaskMessage(Task task) {
+        return "Got it. I've added this task:\n  " + task
+                + "\nNow you have " + guiTasks.size() + " tasks in the list.";
+    }
+    private void addGuiDeadline(String details) throws EsException {
+        int separator = details.indexOf("/by ");
+        if (separator < 0) {
+            throw new EsException("A deadline must include /by followed by a date or time.");
+        }
+        String description = details.substring(0, separator).trim();
+        String deadline = details.substring(separator + 4).trim();
+        if (description.isEmpty()) {
+            throw new EsException("The description of a deadline cannot be empty.");
+        }
+        if (deadline.isEmpty()) {
+            throw new EsException("The deadline cannot be empty.");
+        }
+        addGuiTask(new Deadline(description, deadline));
+    }
+    private void addGuiEvent(String details) throws EsException {
+        int fromSeparator = details.indexOf("/from ");
+        int toSeparator = details.indexOf("/to ");
+        if (fromSeparator < 0 || toSeparator < 0) {
+            throw new EsException("An event must include /from and /to times.");
+        }
+        String description = details.substring(0, fromSeparator).trim();
+        String from = details.substring(fromSeparator + 6, toSeparator).trim();
+        String to = details.substring(toSeparator + 4).trim();
+        if (description.isEmpty()) {
+            throw new EsException("The description of an event cannot be empty.");
+        }
+        if (from.isEmpty() || to.isEmpty()) {
+            throw new EsException("Event times cannot be empty.");
+        }
+        addGuiTask(new Event(description, from, to));
+    }
+    private String toggleGui(String text, boolean mark) throws EsException {
+        String command = mark ? "mark" : "unmark";
+        int index = Integer.parseInt(text.substring(command.length()).trim()) - 1;
+        if (index < 0 || index >= guiTasks.size()) {
+            throw new EsException("There is no task with that number.");
+        }
+        assert guiTasks.get(index) != null : "A valid task index must reference a task";
+        if (mark) {
+            guiTasks.get(index).markAsDone();
+        } else {
+            guiTasks.get(index).markAsNotDone();
+        }
+        guiStorage.save(guiTasks.asList());
+        String message = mark ? "Nice! I've marked this task as done:" : "OK, I've marked this task as not done yet:";
+        return message + "\n  " + guiTasks.get(index);
+    }
+    private String deleteGui(String text) throws EsException {
+        int index = Integer.parseInt(text.substring("delete".length()).trim()) - 1;
+        if (index < 0 || index >= guiTasks.size()) {
+            throw new EsException("There is no task with that number.");
+        }
+        Task removed = guiTasks.remove(index);
+        guiStorage.save(guiTasks.asList());
+        return "Noted. I've removed this task:\n  " + removed
+                + "\nNow you have " + guiTasks.size() + " tasks in the list.";
+    }
     private static final String INDENT = "    ";
 
     public static void main(String[] args) {
