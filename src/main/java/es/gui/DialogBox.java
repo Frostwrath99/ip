@@ -16,8 +16,14 @@ public class DialogBox extends HBox {
     @FXML private Label dialog;
     @FXML private ImageView displayPicture;
     private DialogBox(String text, Image image) {
-        try { FXMLLoader l = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml")); l.setController(this); l.setRoot(this); l.load(); }
-        catch (IOException e) { throw new IllegalStateException("Unable to load dialog", e); }
+        try {
+            FXMLLoader loader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+            loader.setController(this);
+            loader.setRoot(this);
+            loader.load();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load dialog", e);
+        }
         dialog.setText(text); displayPicture.setImage(image);
     }
     private void flip() {
