@@ -47,13 +47,18 @@ public class Es {
                 return matches.toString();
             default: return "Es received: " + commandText;
             }
-        } catch (EsException e) { return "OOPS!!! " + e.getMessage(); }
+        } catch (EsException e) {
+            return "OOPS!!! " + e.getMessage();
+        }
     }
 
     private String addGuiTask(Task task) throws EsException {
         guiTasks.add(task); guiStorage.save(guiTasks.asList()); return addGuiTaskMessage(task);
     }
-    private String addGuiTaskMessage(Task task) { return "Got it. I've added this task:\n  " + task + "\nNow you have " + guiTasks.size() + " tasks in the list."; }
+    private String addGuiTaskMessage(Task task) {
+        return "Got it. I've added this task:\n  " + task
+                + "\nNow you have " + guiTasks.size() + " tasks in the list.";
+    }
     private void addGuiDeadline(String details) throws EsException { int i = details.indexOf("/by "); if (i < 0) throw new EsException("A deadline must include /by followed by a date or time."); String d = details.substring(0, i).trim(); String b = details.substring(i + 4).trim(); if (d.isEmpty()) throw new EsException("The description of a deadline cannot be empty."); if (b.isEmpty()) throw new EsException("The deadline cannot be empty."); addGuiTask(new Deadline(d, b)); }
     private void addGuiEvent(String details) throws EsException { int f = details.indexOf("/from "); int t = details.indexOf("/to "); if (f < 0 || t < 0) throw new EsException("An event must include /from and /to times."); String d = details.substring(0, f).trim(); String from = details.substring(f + 6, t).trim(); String to = details.substring(t + 4).trim(); if (d.isEmpty()) throw new EsException("The description of an event cannot be empty."); if (from.isEmpty() || to.isEmpty()) throw new EsException("Event times cannot be empty."); addGuiTask(new Event(d, from, to)); }
     private String toggleGui(String text, boolean mark) throws EsException { int n = Integer.parseInt(text.substring(mark ? 4 : 6).trim()) - 1; if (n < 0 || n >= guiTasks.size()) throw new EsException("There is no task with that number."); if (mark) guiTasks.get(n).markAsDone(); else guiTasks.get(n).markAsNotDone(); guiStorage.save(guiTasks.asList()); return (mark ? "Nice! I've marked this task as done:\n  " : "OK, I've marked this task as not done yet:\n  ") + guiTasks.get(n); }
