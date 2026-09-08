@@ -53,6 +53,7 @@ public class Es {
     }
 
     private String addGuiTask(Task task) throws EsException {
+        assert task != null : "A task command must create a non-null task";
         guiTasks.add(task); guiStorage.save(guiTasks.asList()); return addGuiTaskMessage(task);
     }
     private String addGuiTaskMessage(Task task) {
@@ -97,6 +98,7 @@ public class Es {
         if (index < 0 || index >= guiTasks.size()) {
             throw new EsException("There is no task with that number.");
         }
+        assert guiTasks.get(index) != null : "A valid task index must reference a task";
         if (mark) {
             guiTasks.get(index).markAsDone();
         } else {
