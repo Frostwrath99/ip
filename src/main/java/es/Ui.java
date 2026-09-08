@@ -19,17 +19,27 @@ public class Ui {
     }
 
     /** Reads the next command, or returns null at end of input. */
-    public String readCommand() { return scanner.hasNextLine() ? scanner.nextLine().trim() : null; }
+    public String readCommand() {
+        return scanner.hasNextLine() ? scanner.nextLine().trim() : null;
+    }
 
     /** Displays the standard divider. */
-    public void showLine() { System.out.println(DIVIDER); }
+    public void showLine() {
+        System.out.println(DIVIDER);
+    }
 
     /** Displays a chatbot response. */
-    public void show(String message) { System.out.println(INDENT + message); }
+    public void show(String message) {
+        System.out.println(INDENT + message);
+    }
 
     /** Displays an error response. */
-    public void showError(String message) { show("OOPS!!! " + message); }
+    public void showError(String message) {
+        show("OOPS!!! " + message);
+    }
 
     /** Returns the indentation used for multiline task details. */
-    public String indent() { return INDENT; }
+    public String indent() {
+        return INDENT;
+    }
 }
