@@ -18,7 +18,8 @@ public final class DateTimeParser {
             DateTimeFormatter.ofPattern("d/M/uuuu"),
             DateTimeFormatter.ofPattern("uuuu-MM-dd"));
 
-    private DateTimeParser() { }
+    private DateTimeParser() {
+    }
 
     /** Parses a date or date-time in one of the supported formats. */
     public static LocalDateTime parse(String value) throws EsException {
