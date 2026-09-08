@@ -19,7 +19,7 @@ public class MainWindow extends AnchorPane {
     private final Image esImage = new Image(getClass().getResourceAsStream("/images/DaDuke.png"));
     @FXML public void initialize() { scrollPane.vvalueProperty().bind(dialogContainer.heightProperty()); }
     /** Injects the chatbot. */
-    public void setEs(Es chatbot) { es = chatbot; }
+    public void setEs(Es chatbot) { assert chatbot != null : "The GUI requires a chatbot instance"; es = chatbot; }
     /** Handles a submitted command. */
     @FXML private void handleUserInput() {
         String input = userInput.getText().trim();
