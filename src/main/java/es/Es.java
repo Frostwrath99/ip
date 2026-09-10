@@ -45,6 +45,12 @@ public class Es {
                 StringBuilder matches = new StringBuilder("Here are the matching tasks in your list:");
                 for (int i : guiTasks.find(keyword)) matches.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
                 return matches.toString();
+            case TAG:
+                return updateGuiTags(commandText, true);
+            case UNTAG:
+                return updateGuiTags(commandText, false);
+            case FINDTAG:
+                return findGuiTag(commandText);
             default: return "Es received: " + commandText;
             }
         } catch (EsException e) {
@@ -117,6 +123,26 @@ public class Es {
         guiStorage.save(guiTasks.asList());
         return "Noted. I've removed this task:\n  " + removed
                 + "\nNow you have " + guiTasks.size() + " tasks in the list.";
+    }
+
+    private String updateGuiTags(String text, boolean adding) throws EsException {
+        String[] parts = text.split("\\s+");
+        if (parts.length < 3) throw new EsException("Provide a task number and at least one tag.");
+        int index = Integer.parseInt(parts[1]) - 1;
+        if (index < 0 || index >= guiTasks.size()) throw new EsException("There is no task with that number.");
+        for (int i = 2; i < parts.length; i++) {
+            if (adding) guiTasks.get(index).addTag(parts[i]); else guiTasks.get(index).removeTag(parts[i]);
+        }
+        guiStorage.save(guiTasks.asList());
+        return "Updated task:\n  " + guiTasks.get(index);
+    }
+
+    private String findGuiTag(String text) throws EsException {
+        String tag = text.substring("findtag".length()).trim();
+        if (!tag.matches("#[^\\s|]+")) throw new EsException("Provide a valid tag to find.");
+        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
+        for (int i = 0; i < guiTasks.size(); i++) if (guiTasks.get(i).getTags().contains(tag)) result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+        return result.toString();
     }
     private static final String INDENT = "    ";
 

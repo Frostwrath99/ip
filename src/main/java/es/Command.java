@@ -12,7 +12,11 @@ public enum Command {
     TODO,
     DEADLINE,
     EVENT,
-    FIND;
+    FIND,
+    TAG,
+    UNTAG,
+    FINDTAG;
+    
 
     /**
      * Identifies the command word at the start of a trimmed input line.

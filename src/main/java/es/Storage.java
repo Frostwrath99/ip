@@ -96,19 +96,19 @@ public class Storage {
         Task task;
         switch (type) {
         case TODO:
-            if (parts.length != 3) {
+            if (parts.length != 3 && parts.length != 4) {
                 throw new EsException("The saved task list is corrupted.");
             }
             task = new Todo(description);
             break;
         case DEADLINE:
-            if (parts.length != 4 || parts[3].trim().isEmpty()) {
+            if ((parts.length != 4 && parts.length != 5) || parts[3].trim().isEmpty()) {
                 throw new EsException("The saved task list is corrupted.");
             }
             task = new Deadline(description, parts[3].trim());
             break;
         case EVENT:
-            if (parts.length != 5 || parts[3].trim().isEmpty() || parts[4].trim().isEmpty()) {
+            if ((parts.length != 5 && parts.length != 6) || parts[3].trim().isEmpty() || parts[4].trim().isEmpty()) {
                 throw new EsException("The saved task list is corrupted.");
             }
             task = new Event(description, parts[3].trim(), parts[4].trim());
@@ -119,6 +119,12 @@ public class Storage {
 
         if (isDone) {
             task.markAsDone();
+        }
+        int tagIndex = type == TaskType.TODO ? 3 : type == TaskType.DEADLINE ? 4 : 5;
+        if (parts.length > tagIndex && !parts[tagIndex].trim().isEmpty()) {
+            for (String tag : parts[tagIndex].trim().split(",")) {
+                task.addTag(tag.trim());
+            }
         }
         return task;
     }
