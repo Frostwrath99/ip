@@ -1,12 +1,12 @@
 package es;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Entry point for the Es chatbot application.
  */
 public class Es {
+    private static final String INDENT = "    ";
     private final Storage guiStorage = new Storage();
     private final TaskList guiTasks = new TaskList(loadTasks(new Storage()));
     /** Returns a response for the graphical interface. */
@@ -23,7 +23,9 @@ public class Es {
             switch (command) {
             case TODO:
                 String description = commandText.substring(4).trim();
-                if (description.isEmpty()) throw new EsException("The description of a todo cannot be empty.");
+                if (description.isEmpty()) {
+                    throw new EsException("The description of a todo cannot be empty.");
+                }
                 return addGuiTask(new Todo(description));
             case DEADLINE:
                 addGuiDeadline(commandText.substring(8).trim());
@@ -33,7 +35,9 @@ public class Es {
                 return addGuiTaskMessage(guiTasks.get(guiTasks.size() - 1));
             case LIST:
                 StringBuilder result = new StringBuilder("Here are the tasks in your list:");
-                for (int i = 0; i < guiTasks.size(); i++) result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                for (int i = 0; i < guiTasks.size(); i++) {
+                    result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                }
                 return result.toString();
             case BYE: return "Bye. Hope to see you again soon!";
             case MARK: return toggleGui(commandText, true);
@@ -41,9 +45,13 @@ public class Es {
             case DELETE: return deleteGui(commandText);
             case FIND:
                 String keyword = commandText.substring(4).trim();
-                if (keyword.isEmpty()) throw new EsException("Please provide a keyword to find.");
+                if (keyword.isEmpty()) {
+                    throw new EsException("Please provide a keyword to find.");
+                }
                 StringBuilder matches = new StringBuilder("Here are the matching tasks in your list:");
-                for (int i : guiTasks.find(keyword)) matches.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                for (int i : guiTasks.find(keyword)) {
+                    matches.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+                }
                 return matches.toString();
             case TAG:
                 return updateGuiTags(commandText, true);
@@ -60,7 +68,9 @@ public class Es {
 
     private String addGuiTask(Task task) throws EsException {
         assert task != null : "A task command must create a non-null task";
-        guiTasks.add(task); guiStorage.save(guiTasks.asList()); return addGuiTaskMessage(task);
+        guiTasks.add(task);
+        guiStorage.save(guiTasks.asList());
+        return addGuiTaskMessage(task);
     }
     private String addGuiTaskMessage(Task task) {
         return "Got it. I've added this task:\n  " + task
@@ -127,12 +137,20 @@ public class Es {
 
     private String updateGuiTags(String text, boolean adding) throws EsException {
         String[] parts = text.split("\\s+");
-        if (parts.length < 3) throw new EsException("Provide a task number and at least one tag.");
+        if (parts.length < 3) {
+            throw new EsException("Provide a task number and at least one tag.");
+        }
         int index = Integer.parseInt(parts[1]) - 1;
-        if (index < 0 || index >= guiTasks.size()) throw new EsException("There is no task with that number.");
+        if (index < 0 || index >= guiTasks.size()) {
+            throw new EsException("There is no task with that number.");
+        }
         for (int i = 2; i < parts.length; i++) {
             String tag = normalizeCommandTag(parts[i]);
-            if (adding) guiTasks.get(index).addTag(tag); else guiTasks.get(index).removeTag(tag);
+            if (adding) {
+                guiTasks.get(index).addTag(tag);
+            } else {
+                guiTasks.get(index).removeTag(tag);
+            }
         }
         guiStorage.save(guiTasks.asList());
         return "Updated task:\n  " + guiTasks.get(index);
@@ -141,17 +159,21 @@ public class Es {
     private String findGuiTag(String text) throws EsException {
         String tag = normalizeCommandTag(text.substring("findtag".length()).trim());
         StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
-        for (int i = 0; i < guiTasks.size(); i++) if (guiTasks.get(i).getTags().contains(tag)) result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+        for (int i = 0; i < guiTasks.size(); i++) {
+            if (guiTasks.get(i).getTags().contains(tag)) {
+                result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
+            }
+        }
         return result.toString();
     }
 
     private static String normalizeCommandTag(String tag) throws EsException {
         String normalized = tag.startsWith("#") ? tag : "#" + tag;
-        if (!normalized.matches("#[^\\s|]+")) throw new EsException("Provide a valid tag.");
+        if (!normalized.matches("#[^\\s|]+")) {
+            throw new EsException("Provide a valid tag.");
+        }
         return normalized;
     }
-    private static final String INDENT = "    ";
-
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();

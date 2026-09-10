@@ -16,7 +16,6 @@ public enum Command {
     TAG,
     UNTAG,
     FINDTAG;
-    
 
     /**
      * Identifies the command word at the start of a trimmed input line.

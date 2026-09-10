@@ -1,6 +1,8 @@
 package es.gui;
+
 import java.io.IOException;
 import java.util.Collections;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,7 +26,8 @@ public class DialogBox extends HBox {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load dialog", e);
         }
-        dialog.setText(text); displayPicture.setImage(image);
+        dialog.setText(text);
+        displayPicture.setImage(image);
     }
     private void flip() {
         ObservableList<Node> children = FXCollections.observableArrayList(getChildren());

@@ -1,15 +1,14 @@
 package es.gui;
-import javafx.application.Platform;
+import es.Es;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.util.Duration;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
-import es.Es;
+import javafx.util.Duration;
 
 /** Controller for the Es chat window. */
 public class MainWindow extends AnchorPane {
