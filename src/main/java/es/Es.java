@@ -194,7 +194,9 @@ public class Es {
                     if (description.isEmpty()) {
                         throw new EsException("The description of a todo cannot be empty.");
                     }
-                    addTask(storage, tasks, new Todo(description));
+                    Todo todo = new Todo(description.replaceAll("(?:^|\\s)#[^\\s|]+", "").trim());
+                    addInlineTags(todo, description);
+                    addTask(storage, tasks, todo);
                     break;
                 case DEADLINE:
                     addDeadline(storage, tasks, input.substring(command.name().length()).trim());
@@ -400,6 +402,14 @@ public class Es {
         ui.show("Here are the matching tasks in your list:");
         for (int index : tasks.find(keyword)) {
             ui.show((index + 1) + "." + tasks.get(index));
+        }
+    }
+
+    private static void addInlineTags(Task task, String text) throws EsException {
+        for (String token : text.split("\\s+")) {
+            if (token.startsWith("#")) {
+                task.addTag(token);
+            }
         }
     }
 }
