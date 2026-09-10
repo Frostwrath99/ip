@@ -131,18 +131,24 @@ public class Es {
         int index = Integer.parseInt(parts[1]) - 1;
         if (index < 0 || index >= guiTasks.size()) throw new EsException("There is no task with that number.");
         for (int i = 2; i < parts.length; i++) {
-            if (adding) guiTasks.get(index).addTag(parts[i]); else guiTasks.get(index).removeTag(parts[i]);
+            String tag = normalizeCommandTag(parts[i]);
+            if (adding) guiTasks.get(index).addTag(tag); else guiTasks.get(index).removeTag(tag);
         }
         guiStorage.save(guiTasks.asList());
         return "Updated task:\n  " + guiTasks.get(index);
     }
 
     private String findGuiTag(String text) throws EsException {
-        String tag = text.substring("findtag".length()).trim();
-        if (!tag.matches("#[^\\s|]+")) throw new EsException("Provide a valid tag to find.");
+        String tag = normalizeCommandTag(text.substring("findtag".length()).trim());
         StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
         for (int i = 0; i < guiTasks.size(); i++) if (guiTasks.get(i).getTags().contains(tag)) result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
         return result.toString();
+    }
+
+    private static String normalizeCommandTag(String tag) throws EsException {
+        String normalized = tag.startsWith("#") ? tag : "#" + tag;
+        if (!normalized.matches("#[^\\s|]+")) throw new EsException("Provide a valid tag.");
+        return normalized;
     }
     private static final String INDENT = "    ";
 
