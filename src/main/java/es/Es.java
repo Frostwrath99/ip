@@ -13,8 +13,13 @@ public class Es {
     public String getResponse(String input) {
         String commandText = input == null ? "" : input.trim();
         if (commandText.isEmpty()) {
-            return "OOPS!!! Please enter a command.";
+            return "... You are silent. Give me something to work with.";
         }
+        String conversation = commandText.replaceFirst("\\?$", "").trim().toLowerCase();
+        if (conversation.equals("hi") || conversation.equals("hello")) return "Pleasure to make your acquaintance.";
+        if (conversation.equals("who are you")) return "I am the librarian of Somniareves. You can call me Es.";
+        if (conversation.equals("what are you")) return "...";
+        if (conversation.equals("where is this place")) return "... I don't know. Perhaps we can figure it out together.";
         Command command = Parser.parse(commandText);
         try {
             if (command == null) {
@@ -59,10 +64,10 @@ public class Es {
                 return updateGuiTags(commandText, false);
             case FINDTAG:
                 return findGuiTag(commandText);
-            default: return "OOPS!!! I'm sorry, but I don't know what that means :-(";
+            default: return "... I didn't expect you to say that.";
             }
         } catch (EsException e) {
-            return "OOPS!!! " + e.getMessage();
+            return "... " + e.getMessage();
         }
     }
 

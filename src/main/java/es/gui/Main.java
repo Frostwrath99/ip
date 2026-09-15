@@ -17,6 +17,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             loader.<MainWindow>getController().setEs(es);
+            loader.<MainWindow>getController().showWelcome();
             stage.setScene(new Scene(root));
             stage.setTitle("Es");
             stage.show();

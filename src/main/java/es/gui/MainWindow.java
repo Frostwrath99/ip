@@ -29,6 +29,12 @@ public class MainWindow extends AnchorPane {
         es = chatbot;
     }
 
+    /** Adds Es's opening message to the conversation. */
+    public void showWelcome() {
+        dialogContainer.getChildren().add(DialogBox.reply(
+                "Welcome to the grand library of dreams, Somniareves. What can I do for you?", esImage));
+    }
+
     /** Handles a submitted command. */
     @FXML private void handleUserInput() {
         String input = userInput.getText().trim();

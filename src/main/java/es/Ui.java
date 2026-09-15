@@ -13,7 +13,7 @@ public class Ui {
         System.out.println(DIVIDER);
         System.out.print(INDENT + " _____     \n" + INDENT + "| ____|___ \n" + INDENT + "|  _| / __|\n"
                 + INDENT + "| |___\\__ \\\n" + INDENT + "|_____|___/\n");
-        System.out.println(INDENT + "Hello! I'm Es.");
+        System.out.println(INDENT + "Welcome to the grand library of dreams, Somniareves.");
         System.out.println(INDENT + "What can I do for you?");
         showLine();
     }
