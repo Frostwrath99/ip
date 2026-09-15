@@ -44,7 +44,7 @@ public class Es {
                     result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
                 }
                 return result.toString();
-            case BYE: return "Bye. Hope to see you again soon!";
+            case BYE: return "Until next time.";
             case MARK: return toggleGui(commandText, true);
             case UNMARK: return toggleGui(commandText, false);
             case DELETE: return deleteGui(commandText);
@@ -252,7 +252,7 @@ public class Es {
         }
 
         ui.showLine();
-        ui.show("Bye. Hope to see you again soon!");
+        ui.show("Until next time.");
         ui.showLine();
     }
 
