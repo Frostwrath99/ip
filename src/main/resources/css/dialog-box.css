@@ -4,8 +4,9 @@
     background:white;
     -fx-background-color: background;
     */
-    -fx-background-color: derive(blue, 0.5);
-    -fx-border-color: #d55e00 #009e73 #cc79a7 #0072b2;
+    -fx-background-color: #5a2a4a;
+    -fx-border-color: #9b59b6;
+    -fx-border-color: #9b59b6;
     -fx-border-width: 2px;
     -fx-background-radius: 1em 1em 0 1em;
     -fx-border-radius: 1em 1em 0 1em;
@@ -16,6 +17,7 @@
 }
 
 .reply-label {
+    -fx-background-color: #6b3157;
     -fx-background-radius: 1em 1em 1em 0;
     -fx-border-radius: 1em 1em 1em 0;
 }
