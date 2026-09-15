@@ -35,7 +35,7 @@ public class Ui {
 
     /** Displays an error response. */
     public void showError(String message) {
-        show(message);
+        show(message.startsWith("...") ? message : "... " + message);
     }
 
     /** Returns the indentation used for multiline task details. */

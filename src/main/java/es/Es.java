@@ -67,7 +67,7 @@ public class Es {
             default: return "... I didn't expect you to say that.";
             }
         } catch (EsException e) {
-            return e.getMessage();
+            return e.getMessage().startsWith("...") ? e.getMessage() : "... " + e.getMessage();
         }
     }
 
@@ -84,7 +84,7 @@ public class Es {
     private void addGuiDeadline(String details) throws EsException {
         int separator = details.indexOf("/by ");
         if (separator < 0) {
-            throw new EsException("A deadline must include /by followed by a date or time.");
+            throw new EsException("... a deadline needs /by followed by a date or time.");
         }
         String description = details.substring(0, separator).trim();
         String deadline = details.substring(separator + 4).trim();
@@ -100,7 +100,7 @@ public class Es {
         int fromSeparator = details.indexOf("/from ");
         int toSeparator = details.indexOf("/to ");
         if (fromSeparator < 0 || toSeparator < 0) {
-            throw new EsException("An event must include /from and /to times.");
+            throw new EsException("... an event needs /from and /to times.");
         }
         String description = details.substring(0, fromSeparator).trim();
         String from = details.substring(fromSeparator + 6, toSeparator).trim();
@@ -143,7 +143,7 @@ public class Es {
     private String updateGuiTags(String text, boolean adding) throws EsException {
         String[] parts = text.split("\\s+");
         if (parts.length < 3) {
-            throw new EsException("Provide a task number and at least one tag.");
+            throw new EsException("... give me something to work with.");
         }
         int index = Integer.parseInt(parts[1]) - 1;
         if (index < 0 || index >= guiTasks.size()) {
@@ -162,7 +162,11 @@ public class Es {
     }
 
     private String findGuiTag(String text) throws EsException {
-        String tag = normalizeCommandTag(text.substring("findtag".length()).trim());
+        String rawTag = text.substring("findtag".length()).trim();
+        if (rawTag.isEmpty()) {
+            throw new EsException("... give me something to work with.");
+        }
+        String tag = normalizeCommandTag(rawTag);
         StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
         for (int i = 0; i < guiTasks.size(); i++) {
             if (guiTasks.get(i).getTags().contains(tag)) {
