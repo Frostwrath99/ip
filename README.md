@@ -59,17 +59,15 @@ Cursor:
 Codex Luna Light:
     Added conversion of deadline strings to dates, along with error handling for incorrect date formats
     Restructured code to follow OOP principles by extracting multiple classes
-
-    JUnit:
-        Maintain tests for the highest-value behavior (at least the top 50% of non-trivial methods).
-        Update the JUnit tests after every code change that affects tested behavior.
-
+    Maintain tests for the highest-value behavior (at least the top 50% of non-trivial methods).
+    Update the JUnit tests after every code change that affects tested behavior.
     Restructured code to package classes
     Edited README.md setup instructions for IntelliJ and Jar
     Created Project Skill and updated Agent.md to follow coding standards
-
     Updated checkstyle and fixed checkstyle violations
+    Updated code according to java coding standard
     Imported GUI from javafx-tutorial files and integrated with current responses
+    Updated GUI background and display colors
     Added delay after bye before closing the GUI
     
 
