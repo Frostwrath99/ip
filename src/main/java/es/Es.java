@@ -29,7 +29,7 @@ public class Es {
             case TODO:
                 String description = commandText.substring(4).trim();
                 if (description.isEmpty()) {
-                    throw new EsException("The description of a todo cannot be empty.");
+                    throw new EsException("... give me something to work with.");
                 }
                 return addGuiTask(new Todo(description));
             case DEADLINE:
@@ -78,7 +78,7 @@ public class Es {
         return addGuiTaskMessage(task);
     }
     private String addGuiTaskMessage(Task task) {
-        return "Got it. I've added this task:\n  " + task
+            return "Noted. I have placed it in your collection:\n  " + task
                 + "\nNow you have " + guiTasks.size() + " tasks in the list.";
     }
     private void addGuiDeadline(String details) throws EsException {
@@ -89,10 +89,10 @@ public class Es {
         String description = details.substring(0, separator).trim();
         String deadline = details.substring(separator + 4).trim();
         if (description.isEmpty()) {
-            throw new EsException("The description of a deadline cannot be empty.");
+            throw new EsException("... a deadline still needs a description.");
         }
         if (deadline.isEmpty()) {
-            throw new EsException("The deadline cannot be empty.");
+            throw new EsException("... specify when it is due.");
         }
         addGuiTask(new Deadline(description, deadline));
     }
@@ -106,10 +106,10 @@ public class Es {
         String from = details.substring(fromSeparator + 6, toSeparator).trim();
         String to = details.substring(toSeparator + 4).trim();
         if (description.isEmpty()) {
-            throw new EsException("The description of an event cannot be empty.");
+            throw new EsException("... an event still needs a description.");
         }
         if (from.isEmpty() || to.isEmpty()) {
-            throw new EsException("Event times cannot be empty.");
+            throw new EsException("... specify when the event begins and ends.");
         }
         addGuiTask(new Event(description, from, to));
     }
@@ -225,7 +225,7 @@ public class Es {
                 case TODO:
                     String description = input.substring(command.name().length()).trim();
                     if (description.isEmpty()) {
-                        throw new EsException("The description of a todo cannot be empty.");
+                        throw new EsException("... give me something to work with.");
                     }
                     Todo todo = new Todo(description.replaceAll("(?:^|\\s)#[^\\s|]+", "").trim());
                     addInlineTags(todo, description);
@@ -301,9 +301,9 @@ public class Es {
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new EsException("The description of a deadline cannot be empty.");
+            throw new EsException("... a deadline still needs a description.");
         } else if (by.isEmpty()) {
-            throw new EsException("The deadline cannot be empty.");
+            throw new EsException("... specify when it is due.");
         } else {
             addTask(storage, tasks, new Deadline(description, by));
         }
@@ -333,11 +333,11 @@ public class Es {
         String from = details.substring(fromIndex + 5, toIndex).trim();
         String to = details.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new EsException("The description of an event cannot be empty.");
+            throw new EsException("... an event still needs a description.");
         } else if (from.isEmpty()) {
-            throw new EsException("The start time of an event cannot be empty.");
+            throw new EsException("... specify when the event begins.");
         } else if (to.isEmpty()) {
-            throw new EsException("The end time of an event cannot be empty.");
+            throw new EsException("... specify when the event ends.");
         } else {
             addTask(storage, tasks, new Event(description, from, to));
         }
