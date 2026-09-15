@@ -37,14 +37,15 @@ public class MainWindow extends AnchorPane {
 
     /** Handles a submitted command. */
     @FXML private void handleUserInput() {
-        String input = userInput.getText().trim();
-        if (input.isEmpty()) {
+        String input = userInput.getText();
+        if (input.trim().isEmpty()) {
             return;
         }
+        String command = input.trim();
         dialogContainer.getChildren().addAll(DialogBox.user(input, userImage),
                 DialogBox.reply(es.getResponse(input), esImage));
         userInput.clear();
-        if (input.equalsIgnoreCase("bye")) {
+        if (command.equalsIgnoreCase("bye")) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
             pause.setOnFinished(event -> Platform.exit());
             pause.play();

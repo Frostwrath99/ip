@@ -11,6 +11,9 @@ public class Es {
     private final TaskList guiTasks = new TaskList(loadTasks(new Storage()));
     /** Returns a response for the graphical interface. */
     public String getResponse(String input) {
+        if (input != null && (!input.equals(input.trim()) || input.matches(".*\\s{2,}.*"))) {
+            return "... use single spaces and no leading or trailing spaces.";
+        }
         String commandText = input == null ? "" : input.trim();
         if (commandText.isEmpty()) {
             return "... You are silent. Give me something to work with.";
@@ -197,6 +200,12 @@ public class Es {
         TaskList tasks = new TaskList(loadTasks(storage));
             String input;
         while ((input = ui.readCommand()) != null) {
+            if (!input.equals(input.trim()) || input.matches(".*\\s{2,}.*")) {
+                ui.showLine();
+                ui.showError("... use single spaces and no leading or trailing spaces.");
+                ui.showLine();
+                continue;
+            }
             Command command = Parser.parse(input);
             CommandAction action = Parser.parseAction(input);
             if (action != null && action.isExit()) {

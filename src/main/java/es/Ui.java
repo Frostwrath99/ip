@@ -20,7 +20,7 @@ public class Ui {
 
     /** Reads the next command, or returns null at end of input. */
     public String readCommand() {
-        return scanner.hasNextLine() ? scanner.nextLine().trim() : null;
+        return scanner.hasNextLine() ? scanner.nextLine() : null;
     }
 
     /** Displays the standard divider. */
