@@ -22,10 +22,18 @@ public class Es {
             return "... You are silent. Give me something to work with.";
         }
         String conversation = commandText.replaceFirst("\\?$", "").trim().toLowerCase();
-        if (conversation.equals("hi") || conversation.equals("hello")) return "Pleasure to make your acquaintance.";
-        if (conversation.equals("who are you")) return "I am the librarian of Somniareves. You can call me Es.";
-        if (conversation.equals("what are you")) return "...";
-        if (conversation.equals("where is this place")) return "... I don't know. Perhaps we can figure it out together.";
+        if (conversation.equals("hi") || conversation.equals("hello")) {
+            return "Pleasure to make your acquaintance.";
+        }
+        if (conversation.equals("who are you")) {
+            return "I am the librarian of Somniareves. You can call me Es.";
+        }
+        if (conversation.equals("what are you")) {
+            return "...";
+        }
+        if (conversation.equals("where is this place")) {
+            return "... I don't know. Perhaps we can figure it out together.";
+        }
         Command command = Parser.parse(commandText);
         try {
             if (command == null) {
@@ -144,7 +152,8 @@ public class Es {
             guiTasks.get(index).markAsNotDone();
         }
         guiStorage.save(guiTasks.asList());
-        String message = mark ? "It is now marked as complete." : "The task has been returned to your list of unfinished matters.";
+        String message = mark ? "It is now marked as complete."
+                : "The task has been returned to your list of unfinished matters.";
         return message + "\n  " + guiTasks.get(index);
     }
     private String deleteGui(String text) throws EsException {

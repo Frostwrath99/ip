@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 class EventTest {
     @Test
     void event_rejectsEndBeforeStart() {
-        assertThrows(EsException.class,
-                () -> new Event("meeting", "2026-08-28 10:00", "2026-08-28 09:00"));
+        String start = "2026-08-28 10:00";
+        String end = "2026-08-28 09:00";
+        assertThrows(EsException.class, () -> new Event("meeting", start, end));
     }
 
     @Test
     void event_rejectsEqualStartAndEnd() {
-        assertThrows(EsException.class,
-                () -> new Event("meeting", "2026-08-28", "2026-08-28"));
+        String date = "2026-08-28";
+        assertThrows(EsException.class, () -> new Event("meeting", date, date));
     }
 }
