@@ -71,6 +71,6 @@ Codex Luna Light:
     Added delay after bye before closing the GUI
     Modified error handling
     Modified responses according to personality (reserved, sophisticated)
-    Updated User Guide
+    Updated User Guide 
     
 
