@@ -53,7 +53,7 @@ public class Es {
                 if (keyword.isEmpty()) {
                     throw new EsException("... give me something to work with.");
                 }
-                StringBuilder matches = new StringBuilder("Here are the matching tasks in your list:");
+                StringBuilder matches = new StringBuilder("These entries match your search:");
                 for (int i : guiTasks.find(keyword)) {
                     matches.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
                 }
@@ -126,7 +126,7 @@ public class Es {
             guiTasks.get(index).markAsNotDone();
         }
         guiStorage.save(guiTasks.asList());
-        String message = mark ? "Nice! I've marked this task as done:" : "OK, I've marked this task as not done yet:";
+        String message = mark ? "It is now marked as complete." : "The task has been returned to your list of unfinished matters.";
         return message + "\n  " + guiTasks.get(index);
     }
     private String deleteGui(String text) throws EsException {
@@ -136,7 +136,7 @@ public class Es {
         }
         Task removed = guiTasks.remove(index);
         guiStorage.save(guiTasks.asList());
-        return "Noted. I've removed this task:\n  " + removed
+        return "It has been removed.\n  " + removed
                 + "\nNow you have " + guiTasks.size() + " tasks in the list.";
     }
 
@@ -158,7 +158,8 @@ public class Es {
             }
         }
         guiStorage.save(guiTasks.asList());
-        return "Updated task:\n  " + guiTasks.get(index);
+        String message = adding ? "The requested tags have been recorded." : "The requested tags have been removed.";
+        return message + "\n  " + guiTasks.get(index);
     }
 
     private String findGuiTag(String text) throws EsException {
@@ -167,7 +168,7 @@ public class Es {
             throw new EsException("... give me something to work with.");
         }
         String tag = normalizeCommandTag(rawTag);
-        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
+        StringBuilder result = new StringBuilder("These entries bear that tag:");
         for (int i = 0; i < guiTasks.size(); i++) {
             if (guiTasks.get(i).getTags().contains(tag)) {
                 result.append("\n").append(i + 1).append(".").append(guiTasks.get(i));
@@ -377,10 +378,10 @@ public class Es {
         Task task = tasks.get(taskNumber - 1);
         if (shouldMark) {
             task.markAsDone();
-            System.out.println(INDENT + "Nice! I've marked this task as done:");
+            System.out.println(INDENT + "It is now marked as complete.");
         } else {
             task.markAsNotDone();
-            System.out.println(INDENT + "OK, I've marked this task as not done yet:");
+            System.out.println(INDENT + "The task has been returned to your list of unfinished matters.");
         }
         System.out.println(INDENT + "  " + task);
         storage.save(tasks.asList());
@@ -413,7 +414,7 @@ public class Es {
 
         Task removedTask = tasks.remove(taskNumber - 1);
 
-        System.out.println(INDENT + "Noted. I've removed this task:");
+        System.out.println(INDENT + "It has been removed.");
         System.out.println(INDENT + "  " + removedTask);
         System.out.println(INDENT + "Now you have " + tasks.size() + " tasks in the list.");
         storage.save(tasks.asList());
@@ -436,7 +437,7 @@ public class Es {
         if (keyword.isEmpty()) {
             throw new EsException("... give me something to work with.");
         }
-        ui.show("Here are the matching tasks in your list:");
+        ui.show("These entries match your search:");
         for (int index : tasks.find(keyword)) {
             ui.show((index + 1) + "." + tasks.get(index));
         }
