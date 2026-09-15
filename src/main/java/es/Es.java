@@ -68,11 +68,16 @@ public class Es {
             }
         } catch (EsException e) {
             return e.getMessage().startsWith("...") ? e.getMessage() : "... " + e.getMessage();
+        } catch (RuntimeException e) {
+            return "... I could not make sense of that command.";
         }
     }
 
     private String addGuiTask(Task task) throws EsException {
         assert task != null : "A task command must create a non-null task";
+        if (guiTasks.asList().stream().anyMatch(existing -> existing.toString().equals(task.toString()))) {
+            throw new EsException("... that task is already in the collection.");
+        }
         guiTasks.add(task);
         guiStorage.save(guiTasks.asList());
         return addGuiTaskMessage(task);
@@ -247,6 +252,8 @@ public class Es {
                 }
             } catch (EsException e) {
                 ui.showError(e.getMessage());
+            } catch (RuntimeException e) {
+                ui.showError("... I could not make sense of that command.");
             }
             ui.showLine();
         }
@@ -282,6 +289,12 @@ public class Es {
      * @param task the task to add
      */
     private static void addTask(Storage storage, TaskList tasks, Task task) throws EsException {
+        if (task == null) {
+            throw new EsException("... I could not create that task.");
+        }
+        if (tasks.asList().stream().anyMatch(existing -> existing.toString().equals(task.toString()))) {
+            throw new EsException("... that task is already in the collection.");
+        }
         tasks.add(task);
         printAddedTask(task, tasks.size());
         storage.save(tasks.asList());
