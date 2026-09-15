@@ -44,7 +44,7 @@ public class DialogBox extends HBox {
     public static DialogBox reply(String text, Image image) {
         DialogBox box = new DialogBox(text, image);
         box.flip();
-        if (text.startsWith("OOPS!!!")) {
+        if (text.startsWith("...")) {
             box.dialog.getStyleClass().add("error-label");
         }
         return box;
