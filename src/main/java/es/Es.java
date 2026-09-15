@@ -59,7 +59,7 @@ public class Es {
                 return updateGuiTags(commandText, false);
             case FINDTAG:
                 return findGuiTag(commandText);
-            default: return "Es received: " + commandText;
+            default: return "OOPS!!! I'm sorry, but I don't know what that means :-(";
             }
         } catch (EsException e) {
             return "OOPS!!! " + e.getMessage();
