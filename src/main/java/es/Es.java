@@ -89,7 +89,7 @@ public class Es {
     private String addGuiTask(Task task) throws EsException {
         assert task != null : "A task command must create a non-null task";
         if (guiTasks.asList().stream().anyMatch(existing -> existing.toString().equals(task.toString()))) {
-            throw new EsException("... that task is already in the collection.");
+            throw new EsException("That task is already in the collection.");
         }
         guiTasks.add(task);
         guiStorage.save(guiTasks.asList());
@@ -102,15 +102,15 @@ public class Es {
     private void addGuiDeadline(String details) throws EsException {
         int separator = details.indexOf("/by ");
         if (separator < 0) {
-            throw new EsException("... a deadline needs /by followed by a date or time.");
+            throw new EsException("A deadline needs /by followed by a date or time.");
         }
         String description = details.substring(0, separator).trim();
         String deadline = details.substring(separator + 4).trim();
         if (description.isEmpty()) {
-            throw new EsException("... a deadline still needs a description.");
+            throw new EsException("A deadline still needs a description.");
         }
         if (deadline.isEmpty()) {
-            throw new EsException("... specify when it is due.");
+            throw new EsException("Specify when it is due.");
         }
         addGuiTask(new Deadline(description, deadline));
     }
@@ -118,16 +118,16 @@ public class Es {
         int fromSeparator = details.indexOf("/from ");
         int toSeparator = details.indexOf("/to ");
         if (fromSeparator < 0 || toSeparator < 0) {
-            throw new EsException("... an event needs /from and /to times.");
+            throw new EsException("An event needs /from and /to times.");
         }
         String description = details.substring(0, fromSeparator).trim();
         String from = details.substring(fromSeparator + 6, toSeparator).trim();
         String to = details.substring(toSeparator + 4).trim();
         if (description.isEmpty()) {
-            throw new EsException("... an event still needs a description.");
+            throw new EsException("An event still needs a description.");
         }
         if (from.isEmpty() || to.isEmpty()) {
-            throw new EsException("... specify when the event begins and ends.");
+            throw new EsException("Specify when the event begins and ends.");
         }
         addGuiTask(new Event(description, from, to));
     }
@@ -312,7 +312,7 @@ public class Es {
             throw new EsException("... I could not create that task.");
         }
         if (tasks.asList().stream().anyMatch(existing -> existing.toString().equals(task.toString()))) {
-            throw new EsException("... that task is already in the collection.");
+            throw new EsException("That task is already in the collection.");
         }
         tasks.add(task);
         printAddedTask(task, tasks.size());
@@ -332,7 +332,7 @@ public class Es {
             byIndex = details.length() - 3;
         }
         if (byIndex < 0) {
-            throw new EsException("... a deadline needs /by followed by a date or time.");
+            throw new EsException("A deadline needs /by followed by a date or time.");
         }
 
         String description = details.substring(0, byIndex).trim();
@@ -340,7 +340,7 @@ public class Es {
         if (description.isEmpty()) {
             throw new EsException("... a deadline still needs a description.");
         } else if (by.isEmpty()) {
-            throw new EsException("... specify when it is due.");
+            throw new EsException("Specify when it is due.");
         } else {
             addTask(storage, tasks, new Deadline(description, by));
         }
@@ -360,10 +360,10 @@ public class Es {
             toIndex = details.length() - 3;
         }
         if (fromIndex < 0 || toIndex < 0) {
-            throw new EsException("... an event needs /from and /to times.");
+            throw new EsException("An event needs /from and /to times.");
         }
         if (toIndex < fromIndex) {
-            throw new EsException("... the event cannot end before it begins.");
+            throw new EsException("The event cannot end before it begins.");
         }
 
         String description = details.substring(0, fromIndex).trim();
@@ -393,18 +393,18 @@ public class Es {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            throw new EsException("... give me a task number to " + action + ".");
+            throw new EsException("Give me a task number to " + action + ".");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new EsException("... the task number to " + action + " must be positive.");
+            throw new EsException("The task number to " + action + " must be positive.");
         }
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new EsException("... there is no task with that number.");
+            throw new EsException("There is no task with that number.");
         }
 
         Task task = tasks.get(taskNumber - 1);
@@ -430,14 +430,14 @@ public class Es {
     private static void deleteTask(Storage storage, TaskList tasks, String command) throws EsException {
         String numberText = command.substring("delete".length()).trim();
         if (numberText.isEmpty()) {
-            throw new EsException("... give me a task number to delete.");
+            throw new EsException("Give me a task number to delete.");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new EsException("... the task number to delete must be positive.");
+            throw new EsException("The task number to delete must be positive.");
         }
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
