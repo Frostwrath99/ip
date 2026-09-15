@@ -70,9 +70,9 @@ public class Es {
             default: return "... I didn't expect you to say that.";
             }
         } catch (EsException e) {
-            return e.getMessage().startsWith("...") ? e.getMessage() : "... " + e.getMessage();
+            return e.getMessage();
         } catch (RuntimeException e) {
-            return "... I could not make sense of that command.";
+            return "I could not make sense of that command.";
         }
     }
 
@@ -262,7 +262,7 @@ public class Es {
             } catch (EsException e) {
                 ui.showError(e.getMessage());
             } catch (RuntimeException e) {
-                ui.showError("... I could not make sense of that command.");
+                ui.showError("I could not make sense of that command.");
             }
             ui.showLine();
         }
