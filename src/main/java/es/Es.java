@@ -23,7 +23,7 @@ public class Es {
         Command command = Parser.parse(commandText);
         try {
             if (command == null) {
-                throw new EsException("I didn't expect you to say that.");
+                throw new EsException("... I didn't expect you to say that.");
             }
             switch (command) {
             case TODO:
@@ -200,7 +200,7 @@ public class Es {
                     if (input.isEmpty()) {
                         throw new EsException("You are silent. Give me something to work with.");
                     }
-                        throw new EsException("I didn't expect you to say that.");
+                        throw new EsException("... I didn't expect you to say that.");
                 }
 
                 switch (command) {
@@ -238,7 +238,7 @@ public class Es {
                     addEvent(storage, tasks, input.substring(command.name().length()).trim());
                     break;
                 default:
-                    throw new EsException("I didn't expect you to say that.");
+                    throw new EsException("... I didn't expect you to say that.");
                 }
             } catch (EsException e) {
                 ui.showError(e.getMessage());
