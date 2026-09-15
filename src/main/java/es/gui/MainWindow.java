@@ -42,8 +42,9 @@ public class MainWindow extends AnchorPane {
             return;
         }
         String command = input.trim();
+        String response = es.getResponse(input);
         dialogContainer.getChildren().addAll(DialogBox.user(input, userImage),
-                DialogBox.reply(es.getResponse(input), esImage));
+                DialogBox.reply(response, esImage, es.wasLastResponseAnError()));
         userInput.clear();
         if (command.equalsIgnoreCase("bye")) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1.5));

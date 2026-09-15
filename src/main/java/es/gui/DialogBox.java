@@ -42,20 +42,16 @@ public class DialogBox extends HBox {
     }
     /** Creates an Es reply. */
     public static DialogBox reply(String text, Image image) {
+        return reply(text, image, false);
+    }
+
+    /** Creates an Es reply, optionally styled as an error. */
+    public static DialogBox reply(String text, Image image, boolean error) {
         DialogBox box = new DialogBox(text, image);
         box.flip();
-        if (isErrorMessage(text)) {
+        if (error) {
             box.dialog.getStyleClass().add("error-label");
         }
         return box;
-    }
-
-    private static boolean isErrorMessage(String text) {
-        String lower = text.toLowerCase();
-        return text.startsWith("Perhaps") || lower.contains("didn't expect")
-                || lower.contains("give me") || lower.contains("could not")
-                || lower.contains("must") || lower.contains("needs")
-                || lower.contains("cannot") || lower.contains("already")
-                || lower.contains("no task") || lower.contains("will not do");
     }
 }

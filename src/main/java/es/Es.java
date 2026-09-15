@@ -9,9 +9,12 @@ public class Es {
     private static final String INDENT = "    ";
     private final Storage guiStorage = new Storage();
     private final TaskList guiTasks = new TaskList(loadTasks(new Storage()));
+    private boolean lastResponseWasError;
     /** Returns a response for the graphical interface. */
     public String getResponse(String input) {
+        lastResponseWasError = false;
         if (input != null && (!input.equals(input.trim()) || input.matches(".*\\s{2,}.*"))) {
+            lastResponseWasError = true;
             return "Perhaps you added an extra space somewhere?";
         }
         String commandText = input == null ? "" : input.trim();
@@ -70,10 +73,17 @@ public class Es {
             default: return "... I didn't expect you to say that.";
             }
         } catch (EsException e) {
+            lastResponseWasError = true;
             return e.getMessage();
         } catch (RuntimeException e) {
+            lastResponseWasError = true;
             return "I could not make sense of that command.";
         }
+    }
+
+    /** Indicates whether the most recent response represented an error. */
+    public boolean wasLastResponseAnError() {
+        return lastResponseWasError;
     }
 
     private String addGuiTask(Task task) throws EsException {
