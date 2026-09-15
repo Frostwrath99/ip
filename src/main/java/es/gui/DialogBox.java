@@ -44,9 +44,18 @@ public class DialogBox extends HBox {
     public static DialogBox reply(String text, Image image) {
         DialogBox box = new DialogBox(text, image);
         box.flip();
-        if (text.startsWith("...") || text.startsWith("Perhaps")) {
+        if (isErrorMessage(text)) {
             box.dialog.getStyleClass().add("error-label");
         }
         return box;
+    }
+
+    private static boolean isErrorMessage(String text) {
+        String lower = text.toLowerCase();
+        return text.startsWith("Perhaps") || lower.contains("didn't expect")
+                || lower.contains("give me") || lower.contains("could not")
+                || lower.contains("must") || lower.contains("needs")
+                || lower.contains("cannot") || lower.contains("already")
+                || lower.contains("no task") || lower.contains("will not do");
     }
 }
