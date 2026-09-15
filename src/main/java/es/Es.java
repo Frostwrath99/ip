@@ -51,7 +51,7 @@ public class Es {
             case FIND:
                 String keyword = commandText.substring(4).trim();
                 if (keyword.isEmpty()) {
-                    throw new EsException("Please provide a keyword to find.");
+                    throw new EsException("... give me something to work with.");
                 }
                 StringBuilder matches = new StringBuilder("Here are the matching tasks in your list:");
                 for (int i : guiTasks.find(keyword)) {
@@ -179,7 +179,7 @@ public class Es {
     private static String normalizeCommandTag(String tag) throws EsException {
         String normalized = tag.startsWith("#") ? tag : "#" + tag;
         if (!normalized.matches("#[^\\s|]+")) {
-            throw new EsException("Provide a valid tag.");
+            throw new EsException("... that tag will not do.");
         }
         return normalized;
     }
@@ -299,7 +299,7 @@ public class Es {
             byIndex = details.length() - 3;
         }
         if (byIndex < 0) {
-            throw new EsException("A deadline must include /by followed by a date or time.");
+            throw new EsException("... a deadline needs /by followed by a date or time.");
         }
 
         String description = details.substring(0, byIndex).trim();
@@ -327,10 +327,10 @@ public class Es {
             toIndex = details.length() - 3;
         }
         if (fromIndex < 0 || toIndex < 0) {
-            throw new EsException("An event must include /from and /to times.");
+            throw new EsException("... an event needs /from and /to times.");
         }
         if (toIndex < fromIndex) {
-            throw new EsException("The /from time must come before the /to time.");
+            throw new EsException("... the event cannot end before it begins.");
         }
 
         String description = details.substring(0, fromIndex).trim();
@@ -360,18 +360,18 @@ public class Es {
         String action = shouldMark ? "mark" : "unmark";
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            throw new EsException("Please provide a task number to " + action + ".");
+            throw new EsException("... give me a task number to " + action + ".");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new EsException("The task number to " + action + " must be a positive whole number.");
+            throw new EsException("... the task number to " + action + " must be positive.");
         }
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new EsException("There is no task with that number.");
+            throw new EsException("... there is no task with that number.");
         }
 
         Task task = tasks.get(taskNumber - 1);
@@ -397,14 +397,14 @@ public class Es {
     private static void deleteTask(Storage storage, TaskList tasks, String command) throws EsException {
         String numberText = command.substring("delete".length()).trim();
         if (numberText.isEmpty()) {
-            throw new EsException("Please provide a task number to delete.");
+            throw new EsException("... give me a task number to delete.");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new EsException("The task number to delete must be a positive whole number.");
+            throw new EsException("... the task number to delete must be positive.");
         }
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -434,7 +434,7 @@ public class Es {
     /** Displays tasks whose descriptions contain the requested keyword. */
     private static void findTasks(TaskList tasks, String keyword, Ui ui) throws EsException {
         if (keyword.isEmpty()) {
-            throw new EsException("Please provide a keyword to find.");
+            throw new EsException("... give me something to work with.");
         }
         ui.show("Here are the matching tasks in your list:");
         for (int index : tasks.find(keyword)) {
