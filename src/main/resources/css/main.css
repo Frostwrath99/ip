@@ -1,52 +1,14 @@
-.root {
-    main-color: rgb(237, 255, 242);       /* Create a looked-up color called "main-color" within root. */
-    -fx-background-color: main-color;
-    -fx-background-image: url("../images/DaDuke.png"); /* Set image */
-    -fx-background-size: stretch;
-}
-
-.text-field {
-    -fx-background-color: #d9ffe2;
-    -fx-font: 20px "Arial";
-}
-
-.button {
-    -fx-background-color: mediumspringgreen;
-    -fx-font: italic bold 16px "Arial";
-}
-
-.button:hover {
-    -fx-background-color:cyan;
-    -fx-font-size: 18px;
-}
-
-.button:pressed {
-    -fx-background-color:orange;
-    -fx-font-size: 20px;
-}
-
-.scroll-pane {
-    -fx-background-color: rgba(0,0,0,.5);
-}
-
-.scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.scroll-bar {
-    -fx-font-size: 10px;  /* Change width of scroll bar. */
-    -fx-background-color: main-color;
-}
-
-.scroll-bar .thumb {
-    -fx-background-color: #ff9cb4;
-    -fx-background-radius: 1em;
-}
-
-/* Hides the increment and decrement buttons. */
-.scroll-bar .increment-button,
-.scroll-bar .decrement-button {
-    -fx-pref-height: 0;
-    -fx-opacity: 0;
-}
-
+.root { -fx-background-color: #182230; -fx-font-family: "Segoe UI", Arial, sans-serif; }
+.text-field { -fx-background-color: #253447; -fx-text-fill: #f4f7fb; -fx-prompt-text-fill: #9baabd; -fx-font-size: 14px; -fx-padding: 10px 12px; -fx-background-radius: 8px; -fx-border-color: #40536b; -fx-border-radius: 8px; }
+.button { -fx-background-color: #4f8cff; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8px; }
+.button:hover { -fx-background-color: #6da3ff; }
+.button:pressed { -fx-background-color: #376dcc; }
+.scroll-pane { -fx-background-color: #182230; -fx-padding: 8px; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-bar { -fx-background-color: #182230; }
+.scroll-bar .thumb { -fx-background-color: #40536b; -fx-background-radius: 8px; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-pref-height: 0; -fx-opacity: 0; }
+.label { -fx-background-color: #2e4057; -fx-text-fill: #f4f7fb; -fx-font-size: 14px; -fx-padding: 9px 12px; -fx-background-radius: 12px 12px 12px 2px; -fx-max-width: 310px; }
+.reply-label { -fx-background-color: #263b55; -fx-background-radius: 12px 12px 2px 12px; }
+.error-label { -fx-background-color: #7d2934; -fx-text-fill: #ffe8eb; -fx-border-color: #ff7180; -fx-border-width: 1px; -fx-border-radius: 12px 12px 2px 12px; }
+#displayPicture { -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.5, 2, 2); -fx-scale-x: 0.62; -fx-scale-y: 0.62; }
