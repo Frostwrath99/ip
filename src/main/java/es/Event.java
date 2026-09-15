@@ -20,6 +20,9 @@ public class Event extends Task {
         super(description, TaskType.EVENT);
         this.from = DateTimeParser.parse(from);
         this.to = DateTimeParser.parse(to);
+        if (!this.to.isAfter(this.from)) {
+            throw new EsException("Did you mix up the start and end time?");
+        }
     }
 
     /**
