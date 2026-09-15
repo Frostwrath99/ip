@@ -69,5 +69,6 @@ Codex Luna Light:
     Imported GUI from javafx-tutorial files and integrated with current responses
     Updated GUI background and display colors
     Added delay after bye before closing the GUI
+
     
 
