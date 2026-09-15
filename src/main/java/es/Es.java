@@ -67,7 +67,7 @@ public class Es {
             default: return "... I didn't expect you to say that.";
             }
         } catch (EsException e) {
-            return "... " + e.getMessage();
+            return e.getMessage();
         }
     }
 
